@@ -10,13 +10,11 @@ namespace MicroNetCore.Rest.Extensions
         public static IMvcBuilder AddRestControllers(this IMvcBuilder builder, IEnumerable<Type> types)
         {
             var controllerTypes = types.Select(t => typeof(RestController<>).MakeGenericType(t));
-            return builder.AddApplicationPart(controllerTypes);
-        }
+            var applicationPart = new RestApplicationPart(controllerTypes);
 
-        private static IMvcBuilder AddApplicationPart(this IMvcBuilder builder, IEnumerable<Type> controllerTypes)
-        {
-            return builder.ConfigureApplicationPartManager(
-                apm => apm.ApplicationParts.Add(new RestApplicationPart(controllerTypes)));
+            builder.ConfigureApplicationPartManager(apm => apm.ApplicationParts.Add(applicationPart));
+
+            return builder;
         }
     }
 }

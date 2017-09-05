@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using MicroNetCore.Rest.Hypermedia.Models;
 
-namespace MicroNetCore.Rest
+namespace MicroNetCore.Rest.Services
 {
     public interface IRestService<TModel>
         where TModel : class, new()
     {
         Task<IEnumerable<TModel>> FindAsync(Expression<Func<TModel, bool>> predicate = null);
 
-        Task<TModel> GetAsync(long id);
+        Task<Entity> GetAsync(long id);
 
         Task<long> PostAsync(TModel model);
 

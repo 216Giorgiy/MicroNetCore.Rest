@@ -8,13 +8,14 @@ namespace MicroNetCore.Rest
 {
     public sealed class RestApplicationPart : ApplicationPart, IApplicationPartTypeProvider
     {
+        private const string ApplicationPartName = "RestControllers";
+
         public RestApplicationPart(IEnumerable<Type> types)
         {
-            Name = nameof(RestApplicationPart);
             Types = types.Select(t => t.GetTypeInfo());
         }
 
-        public override string Name { get; }
+        public override string Name => ApplicationPartName;
         public IEnumerable<TypeInfo> Types { get; }
     }
 }

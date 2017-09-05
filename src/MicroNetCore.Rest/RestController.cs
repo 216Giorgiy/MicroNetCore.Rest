@@ -1,18 +1,18 @@
 using System.Threading.Tasks;
+using MicroNetCore.Models;
+using MicroNetCore.Rest.Services;
 using Microsoft.AspNetCore.Mvc;
-
-// RESTful controller need to implement HATEOAS principles. This is one of the main tasks to complete.
-// Also need to add filtering and paging.
 
 namespace MicroNetCore.Rest
 {
-    [RestController]
+    [Route("api/[controller]")]
     public abstract class RestController<TModel> : Controller
-        where TModel : class, new()
+        where TModel : class, IModel, new()
     {
         private readonly IRestService<TModel> _restService;
 
-        protected RestController(IRestService<TModel> restService)
+        // ReSharper disable once PublicConstructorInAbstractClass
+        public RestController(IRestService<TModel> restService)
         {
             _restService = restService;
         }

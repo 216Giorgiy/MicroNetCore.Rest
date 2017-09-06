@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using MicroNetCore.Data.Abstractions;
 using MicroNetCore.Models;
 using MicroNetCore.Rest.Hypermedia.Helpers;
 using MicroNetCore.Rest.Hypermedia.Models;
@@ -40,7 +41,20 @@ namespace MicroNetCore.Rest.Hypermedia.Services
                 .ToArray();
         }
 
-        private IEnumerable<SubEntity> GetSubEntities<TModel>(PropertyInfo propertyInfo, TModel model)
+        public SubEntity[] Generate<TModel>(ICollection<TModel> models)
+            where TModel : class, IModel
+        {
+            return models.SelectMany(m => GetParentSubEntity(m, new[] {"item"})).ToArray();
+        }
+
+        public SubEntity[] Generate<TModel>(IPageCollection<TModel> page)
+            where TModel : class, IModel
+        {
+            return page.SelectMany(m => GetParentSubEntity(m, new[] {"item"})).ToArray();
+        }
+
+        private IEnumerable<SubEntity> GetSubEntities<TModel>(
+            PropertyInfo propertyInfo, TModel model)
             where TModel : class, IModel
         {
             var value = propertyInfo.GetValue(model);
@@ -49,15 +63,16 @@ namespace MicroNetCore.Rest.Hypermedia.Services
                 return new SubEntity[0];
 
             if (value is IModel iModel)
-                return GetParentSubEntity(propertyInfo, iModel);
+                return GetParentSubEntity(iModel, GetParentRelValue(propertyInfo));
 
-            if (value is IEnumerable<IModel> iModels)
-                return GetChildSubEntities(propertyInfo, iModels);
+            if (value is ICollection<IModel> iModels)
+                return GetChildSubEntities(iModels, GetChildRelValue(propertyInfo));
 
             throw new Exception("Unknown type of sub-entity.");
         }
 
-        private IEnumerable<SubEntity> GetParentSubEntity<TModel>(PropertyInfo propertyInfo, TModel model)
+        private IEnumerable<SubEntity> GetParentSubEntity<TModel>(
+            TModel model, string[] rel)
             where TModel : class, IModel
         {
             return new SubEntity[]
@@ -67,24 +82,36 @@ namespace MicroNetCore.Rest.Hypermedia.Services
                     Class = _classGenerator.Generate(model),
                     Links = _linksGenerator.Generate(model),
                     Properties = _propertiesGenerator.Generate(model),
-                    Rel = new[] {$"{propertyInfo.DeclaringType.Name}-{propertyInfo.Name}".ToLower()},
+                    Rel = rel,
                     Title = _titleGenerator.Generate(model)
                 }
             };
         }
 
-        private IEnumerable<SubEntity> GetChildSubEntities<TModel>(PropertyInfo propertyInfo,
-            IEnumerable<TModel> models)
+        private IEnumerable<SubEntity> GetChildSubEntities<TModel>(
+            ICollection<TModel> models, string[] rel)
             where TModel : class, IModel
         {
             return models.Select(m => new EmbeddedLink
             {
-                Class = new[] {propertyInfo.PropertyType.Name},
+                Class = _classGenerator.Generate(m),
                 Href = _apiHelper.GetUri(m.GetType(), m.Id),
-                Rel = new[] {$"{typeof(TModel)}-{propertyInfo.Name}"},
+                Rel = rel,
                 Title = _titleGenerator.Generate(m),
                 Type = "application/json"
             });
+        }
+
+        // ReSharper disable once SuggestBaseTypeForParameter
+        private static string[] GetParentRelValue(PropertyInfo propertyInfo)
+        {
+            return new[] {$"{propertyInfo.DeclaringType.Name}-{propertyInfo.Name}".ToLower()};
+        }
+
+        // ReSharper disable once SuggestBaseTypeForParameter
+        private static string[] GetChildRelValue(PropertyInfo propertyInfo)
+        {
+            return new[] {$"{propertyInfo.DeclaringType.Name}-{propertyInfo.Name}".ToLower()};
         }
     }
 }

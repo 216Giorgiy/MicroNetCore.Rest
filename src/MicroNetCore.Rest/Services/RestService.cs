@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using MicroNetCore.Data.Abstractions;
@@ -23,9 +22,17 @@ namespace MicroNetCore.Rest.Services
             _repository = repository;
         }
 
-        public async Task<IEnumerable<TModel>> FindAsync(Expression<Func<TModel, bool>> predicate = null)
+        public async Task<Entity> FindAsync(Expression<Func<TModel, bool>> predicate = null)
         {
-            return await _repository.FindAsync(predicate);
+            var models = await _repository.FindAsync(predicate);
+            return _hypermediaService.Create(models);
+        }
+
+        public async Task<Entity> FindPageAsync(int pageIndex, int pageSize,
+            Expression<Func<TModel, bool>> predicate = null)
+        {
+            var page = await _repository.FindPageAsync(pageIndex, pageSize, predicate);
+            return _hypermediaService.Create(page);
         }
 
         public async Task<Entity> GetAsync(long id)

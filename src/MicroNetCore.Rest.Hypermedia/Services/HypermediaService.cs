@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MicroNetCore.Data.Abstractions;
 using MicroNetCore.Models;
 using MicroNetCore.Rest.Hypermedia.Models;
 
@@ -33,7 +34,7 @@ namespace MicroNetCore.Rest.Hypermedia.Services
         public Entity Create<TModel>(TModel model)
             where TModel : class, IModel, new()
         {
-            var entity = new Entity
+            return new Entity
             {
                 Actions = _actionsGenerator.Generate(model),
                 Class = _classGenerator.Generate(model),
@@ -42,8 +43,34 @@ namespace MicroNetCore.Rest.Hypermedia.Services
                 Entities = _subEntitiesGenerator.Generate(model),
                 Title = _titleGenerator.Generate(model)
             };
+        }
 
-            return entity;
+        public Entity Create<TModel>(ICollection<TModel> models)
+            where TModel : class, IModel, new()
+        {
+            return new Entity
+            {
+                Actions = _actionsGenerator.Generate(models),
+                Class = _classGenerator.Generate(models),
+                Links = _linksGenerator.Generate(models),
+                Properties = _propertiesGenerator.Generate(models),
+                Entities = _subEntitiesGenerator.Generate(models),
+                Title = _titleGenerator.Generate(models)
+            };
+        }
+
+        public Entity Create<TModel>(IPageCollection<TModel> page)
+            where TModel : class, IModel, new()
+        {
+            return new Entity
+            {
+                Actions = _actionsGenerator.Generate(page),
+                Class = _classGenerator.Generate(page),
+                Links = _linksGenerator.Generate(page),
+                Properties = _propertiesGenerator.Generate(page),
+                Entities = _subEntitiesGenerator.Generate(page),
+                Title = _titleGenerator.Generate(page)
+            };
         }
 
         #region Helpers

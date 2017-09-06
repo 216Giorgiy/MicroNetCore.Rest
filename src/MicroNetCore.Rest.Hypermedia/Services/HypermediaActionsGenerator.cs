@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Reflection;
 using Humanizer;
+using MicroNetCore.Data.Abstractions;
 using MicroNetCore.Models;
 using MicroNetCore.Models.Markup;
 using MicroNetCore.Rest.Hypermedia.Helpers;
@@ -26,6 +28,18 @@ namespace MicroNetCore.Rest.Hypermedia.Services
                 GetEditAction(model),
                 GetDeleteAction(model)
             };
+        }
+
+        public Action[] Generate<TModel>(ICollection<TModel> models)
+            where TModel : class, IModel
+        {
+            return new Action[0];
+        }
+
+        public Action[] Generate<TModel>(IPageCollection<TModel> page)
+            where TModel : class, IModel
+        {
+            return new Action[0];
         }
 
         private Action GetEditAction<TModel>(TModel model)

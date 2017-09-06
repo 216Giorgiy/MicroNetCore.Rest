@@ -16,6 +16,8 @@ namespace MicroNetCore.Rest.Hypermedia.Services
             _apiHelper = apiHelper;
         }
 
+        #region IHypermediaLinksGenerator
+
         public Link[] Generate<TModel>(TModel model)
             where TModel : class, IModel
         {
@@ -37,12 +39,23 @@ namespace MicroNetCore.Rest.Hypermedia.Services
         public Link[] Generate<TModel>(IPageCollection<TModel> page)
             where TModel : class, IModel
         {
-            return new[]
+            var links = new List<Link>
             {
                 GetSelfLink(typeof(TModel), page.PageIndex, page.PageSize)
             };
+
+            if (page.PageIndex > 1)
+                links.Add(GetPrevLink(typeof(TModel), page.PageIndex, page.PageSize));
+
+            if (page.PageIndex < page.PageCount)
+                links.Add(GetNextLink(typeof(TModel), page.PageIndex, page.PageSize));
+
+            return links.ToArray();
         }
 
+        #endregion
+
+        #region Helpers
 
         private Link GetSelfLink(Type type)
         {
@@ -64,17 +77,42 @@ namespace MicroNetCore.Rest.Hypermedia.Services
 
         private Link GetSelfLink(Type type, int pageIndex, int pageSize)
         {
+            return new Link
+            {
+                Rel = new[] {"self"},
+                Href = GetPageHref(type, pageIndex, pageSize)
+            };
+        }
+
+        private Link GetPrevLink(Type type, int pageIndex, int pageSize)
+        {
+            return new Link
+            {
+                Rel = new[] { "prev" },
+                Href = GetPageHref(type, pageIndex - 1, pageSize)
+            };
+        }
+
+        private Link GetNextLink(Type type, int pageIndex, int pageSize)
+        {
+            return new Link
+            {
+                Rel = new[] { "next" },
+                Href = GetPageHref(type, pageIndex + 1, pageSize)
+            };
+        }
+
+        private string GetPageHref(Type type, int pageIndex, int pageSize)
+        {
             var query = new Dictionary<string, object>
             {
                 {"pageIndex", pageIndex},
                 {"pageSize", pageSize}
             };
 
-            return new Link
-            {
-                Rel = new[] {"self"},
-                Href = _apiHelper.GetUri(type, query)
-            };
+            return _apiHelper.GetUri(type, query);
         }
+        
+        #endregion
     }
 }

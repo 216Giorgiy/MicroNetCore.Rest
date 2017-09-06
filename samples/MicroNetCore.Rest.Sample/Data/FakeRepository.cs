@@ -7,7 +7,7 @@ using MicroNetCore.Models;
 
 namespace MicroNetCore.Rest.Sample.Data
 {
-    public sealed class Repository<TModel> : IRepository<TModel>
+    public sealed class FakeRepository<TModel> : IRepository<TModel>
         where TModel : class, IModel, new()
     {
         public async Task<ICollection<TModel>> FindAsync(Expression<Func<TModel, bool>> predicate = null)
@@ -18,7 +18,7 @@ namespace MicroNetCore.Rest.Sample.Data
         public async Task<IPageCollection<TModel>> FindPageAsync(int pageIndex, int pageSize,
             Expression<Func<TModel, bool>> predicate = null)
         {
-            return new SamplePage<TModel>(1, 1, 10, new List<TModel> {new TModel(), new TModel()});
+            return new SamplePage<TModel>(3, 2, 10, new List<TModel> {new TModel(), new TModel()});
         }
 
         public async Task<TModel> GetAsync(long id)

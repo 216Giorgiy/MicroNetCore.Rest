@@ -10,9 +10,15 @@ namespace MicroNetCore.Rest.Sample.Data
     public sealed class Repository<TModel> : IRepository<TModel>
         where TModel : class, IModel, new()
     {
-        public async Task<IEnumerable<TModel>> FindAsync(Expression<Func<TModel, bool>> predicate = null)
+        public async Task<ICollection<TModel>> FindAsync(Expression<Func<TModel, bool>> predicate = null)
         {
-            return new List<TModel>();
+            return new List<TModel> {new TModel(), new TModel()};
+        }
+
+        public async Task<IPageCollection<TModel>> FindPageAsync(int pageIndex, int pageSize,
+            Expression<Func<TModel, bool>> predicate = null)
+        {
+            return new SamplePage<TModel>(1, 1, 10, new List<TModel> {new TModel(), new TModel()});
         }
 
         public async Task<TModel> GetAsync(long id)

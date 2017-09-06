@@ -1,8 +1,10 @@
 ﻿using MicroNetCore.Models;
 using MicroNetCore.Models.Markup;
+using MicroNetCore.Rest.Hypermedia.Attributes;
 
 namespace MicroNetCore.Rest.Sample.Models
 {
+    [Title("User")]
     public sealed class User : IModel
     {
         [Edit]

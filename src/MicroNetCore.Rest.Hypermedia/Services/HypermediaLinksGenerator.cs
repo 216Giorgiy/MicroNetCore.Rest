@@ -88,7 +88,7 @@ namespace MicroNetCore.Rest.Hypermedia.Services
         {
             return new Link
             {
-                Rel = new[] { "prev" },
+                Rel = new[] {"prev"},
                 Href = GetPageHref(type, pageIndex - 1, pageSize)
             };
         }
@@ -97,7 +97,7 @@ namespace MicroNetCore.Rest.Hypermedia.Services
         {
             return new Link
             {
-                Rel = new[] { "next" },
+                Rel = new[] {"next"},
                 Href = GetPageHref(type, pageIndex + 1, pageSize)
             };
         }
@@ -112,7 +112,7 @@ namespace MicroNetCore.Rest.Hypermedia.Services
 
             return _apiHelper.GetUri(type, query);
         }
-        
+
         #endregion
     }
 }

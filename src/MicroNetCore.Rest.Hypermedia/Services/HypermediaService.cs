@@ -32,7 +32,7 @@ namespace MicroNetCore.Rest.Hypermedia.Services
         }
 
         public Entity Create<TModel>(TModel model)
-            where TModel : class, IModel, new()
+            where TModel : class, IModel
         {
             return new Entity
             {
@@ -46,7 +46,7 @@ namespace MicroNetCore.Rest.Hypermedia.Services
         }
 
         public Entity Create<TModel>(ICollection<TModel> models)
-            where TModel : class, IModel, new()
+            where TModel : class, IModel
         {
             return new Entity
             {
@@ -60,7 +60,7 @@ namespace MicroNetCore.Rest.Hypermedia.Services
         }
 
         public Entity Create<TModel>(IPageCollection<TModel> page)
-            where TModel : class, IModel, new()
+            where TModel : class, IModel
         {
             return new Entity
             {

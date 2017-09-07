@@ -8,12 +8,12 @@ namespace MicroNetCore.Rest.Hypermedia.Services
     public interface IHypermediaService
     {
         Entity Create<TModel>(TModel model)
-            where TModel : class, IModel, new();
+            where TModel : class, IModel;
 
         Entity Create<TModel>(ICollection<TModel> models)
-            where TModel : class, IModel, new();
+            where TModel : class, IModel;
 
         Entity Create<TModel>(IPageCollection<TModel> page)
-            where TModel : class, IModel, new();
+            where TModel : class, IModel;
     }
 }

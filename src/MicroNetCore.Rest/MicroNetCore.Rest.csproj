@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <PackageReference Include="Humanizer.Core" Version="2.2.0" />
-    <PackageReference Include="MicroNetCore.Data.Abstractions" Version="0.0.6-alpha" />
+    <PackageReference Include="MicroNetCore.Data.Abstractions" Version="0.0.8-alpha" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Xml" Version="2.0.0" />

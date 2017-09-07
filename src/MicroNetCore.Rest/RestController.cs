@@ -1,9 +1,8 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using MicroNetCore.Data.Abstractions;
 using MicroNetCore.Models;
-using MicroNetCore.Rest.Hypermedia.Models;
-using MicroNetCore.Rest.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,47 +12,48 @@ namespace MicroNetCore.Rest
     public abstract class RestController<TModel> : Controller
         where TModel : class, IModel, new()
     {
-        private readonly IRestService<TModel> _restService;
+        private readonly IRepository<TModel> _repository;
 
         // ReSharper disable once PublicConstructorInAbstractClass
-        public RestController(IRestService<TModel> restService)
+        public RestController(IRepositoryFactory repositoryFactory)
         {
-            _restService = restService;
+            _repository = repositoryFactory.Create<TModel>();
         }
 
         [HttpGet]
-        public async Task<Entity> Get()
+        public async Task<IActionResult> Get()
         {
             var paging = GetPaging(Request);
-            return paging == null
-                ? await _restService.FindAsync()
-                : await _restService.FindPageAsync(paging.Value.pageIndex, paging.Value.pageSize);
+
+            return Ok(paging == null
+                ? await _repository.FindAsync()
+                : await _repository.FindPageAsync(paging.Value.pageIndex, paging.Value.pageSize));
         }
 
         [HttpGet("{id}")]
-        public async Task<Entity> Get(long id)
+        public async Task<IActionResult> Get(long id)
         {
-            return await _restService.GetAsync(id);
+            return Ok(await _repository.GetAsync(id));
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] TModel model)
         {
-            await _restService.PostAsync(model);
+            await _repository.PostAsync(model);
             return StatusCode((int) HttpStatusCode.Created);
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(long id, [FromBody] TModel model)
         {
-            await _restService.PutAsync(id, model);
+            await _repository.PutAsync(id, model);
             return Ok();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(long id)
         {
-            await _restService.DeleteAsync(id);
+            await _repository.DeleteAsync(id);
             return Ok();
         }
 

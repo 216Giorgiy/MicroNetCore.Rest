@@ -1,6 +1,8 @@
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using MicroNetCore.Models;
+using MicroNetCore.Rest.Hypermedia.Models;
 using MicroNetCore.Rest.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -20,26 +22,25 @@ namespace MicroNetCore.Rest
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<Entity> Get()
         {
             var paging = GetPaging(Request);
-            return Ok(paging == null
+            return paging == null
                 ? await _restService.FindAsync()
-                : await _restService.FindPageAsync(paging.Value.pageIndex, paging.Value.pageSize));
+                : await _restService.FindPageAsync(paging.Value.pageIndex, paging.Value.pageSize);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(long id)
+        public async Task<Entity> Get(long id)
         {
-            var model = await _restService.GetAsync(id);
-            return Ok(model);
+            return await _restService.GetAsync(id);
         }
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] TModel model)
         {
             await _restService.PostAsync(model);
-            return Ok();
+            return StatusCode((int) HttpStatusCode.Created);
         }
 
         [HttpPut("{id}")]

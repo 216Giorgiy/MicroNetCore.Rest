@@ -1,50 +1,55 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Runtime.Serialization;
 
 namespace MicroNetCore.Rest.Hypermedia.Models
 {
+    [DataContract]
+    [KnownType(typeof(EmbeddedLink))]
+    [KnownType(typeof(EmbeddedRepresentation))]
     public abstract class SubEntity
     {
         // Optional
-        [JsonProperty(Order = 1)]
+        [DataMember(Order = 1)]
         public string[] Class { get; set; }
 
         // Required
-        [JsonProperty(Order = 2)]
+        [DataMember(Order = 2)]
         public string[] Rel { get; set; }
 
         // Optional
-        [JsonProperty(Order = int.MaxValue)]
+        [DataMember(Order = int.MaxValue)]
         public string Title { get; set; }
     }
 
+    [DataContract]
     public sealed class EmbeddedLink : SubEntity
     {
         // Required
-        [JsonProperty(Order = 3)]
+        [DataMember(Order = 3)]
         public string Href { get; set; }
 
         // Optional
-        [JsonProperty(Order = 4)]
+        [DataMember(Order = 4)]
         public string Type { get; set; }
     }
 
+    [DataContract]
     public sealed class EmbeddedRepresentation : SubEntity
     {
         // Optional
-        [JsonProperty(Order = 3)]
+        [DataMember(Order = 3)]
         public IDictionary<string, object> Properties { get; set; }
 
         // Optional
-        [JsonProperty(Order = 4)]
+        [DataMember(Order = 4)]
         public SubEntity[] Entities { get; set; }
 
         // Optional
-        [JsonProperty(Order = 5)]
+        [DataMember(Order = 5)]
         public Action[] Actions { get; set; }
 
         // Optional
-        [JsonProperty(Order = 6)]
+        [DataMember(Order = 6)]
         public Link[] Links { get; set; }
     }
 }

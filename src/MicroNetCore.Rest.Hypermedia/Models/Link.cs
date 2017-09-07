@@ -1,27 +1,28 @@
-﻿using Newtonsoft.Json;
+﻿using System.Runtime.Serialization;
 
 namespace MicroNetCore.Rest.Hypermedia.Models
 {
+    [DataContract]
     public sealed class Link
     {
         // Required
-        [JsonProperty(Order = 1)]
+        [DataMember(Order = 1)]
         public string[] Rel { get; set; }
 
         // Required
-        [JsonProperty(Order = 2)]
+        [DataMember(Order = 2)]
         public string Href { get; set; }
 
         // Optional
-        [JsonProperty(Order = 3)]
+        [DataMember(Order = 3)]
         public string Title { get; set; }
 
         // Optional
-        [JsonProperty(Order = 4)]
+        [DataMember(Order = 4)]
         public string Type { get; set; }
 
         // Optional
-        [JsonProperty(Order = 5)]
+        [DataMember(Order = 5)]
         public string Class { get; set; }
     }
 }

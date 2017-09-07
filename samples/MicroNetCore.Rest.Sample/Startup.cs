@@ -1,4 +1,6 @@
-﻿using MicroNetCore.Data.Abstractions;
+﻿using System;
+using System.Collections.Generic;
+using MicroNetCore.Data.Abstractions;
 using MicroNetCore.Rest.Extensions;
 using MicroNetCore.Rest.Sample.Data;
 using MicroNetCore.Rest.Sample.Models;
@@ -9,8 +11,10 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace MicroNetCore.Rest.Sample
 {
-    public class Startup
+    public sealed class Startup
     {
+        private static readonly IEnumerable<Type> RestTypes = new[] {typeof(User), typeof(Role)};
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -21,10 +25,8 @@ namespace MicroNetCore.Rest.Sample
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddMvcWithRestControllers(RestTypes);
             services.AddTransient(typeof(IRepository<>), typeof(FakeRepository<>));
-
-            services.AddRest();
-            services.AddMvc().AddRestControllers(new[] {typeof(User), typeof(Role)});
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

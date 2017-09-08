@@ -14,10 +14,12 @@ namespace MicroNetCore.Rest.Hypermedia.Services
     public sealed class HypermediaActionsGenerator : IHypermediaActionsGenerator
     {
         private readonly IApiHelper _apiHelper;
+        private readonly IHypermediaFieldMapper _fieldMapper;
 
-        public HypermediaActionsGenerator(IApiHelper apiHelper)
+        public HypermediaActionsGenerator(IApiHelper apiHelper, IHypermediaFieldMapper fieldMapper)
         {
             _apiHelper = apiHelper;
+            _fieldMapper = fieldMapper;
         }
 
         public Action[] Generate<TModel>(TModel model)
@@ -56,7 +58,7 @@ namespace MicroNetCore.Rest.Hypermedia.Services
             };
         }
 
-        private static Action.Field[] GetEditForm<TModel>()
+        private Action.Field[] GetEditForm<TModel>()
         {
             return typeof(TModel)
                 .GetProperties()
@@ -64,7 +66,7 @@ namespace MicroNetCore.Rest.Hypermedia.Services
                 .Select(p => new Action.Field
                 {
                     Name = p.Name.Camelize(),
-                    Type = p.PropertyType.Name
+                    Type = _fieldMapper.Map(p.PropertyType)
                 }).ToArray();
         }
 

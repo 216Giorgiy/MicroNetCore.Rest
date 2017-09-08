@@ -9,6 +9,7 @@ namespace MicroNetCore.Rest.Hypermedia.Extensions
         public static IServiceCollection AddRestHypermedia(this IServiceCollection services)
         {
             services.AddSingleton<IApiHelper, ApiHelper>();
+
             services.AddTransient<IHypermediaService, HypermediaService>();
             services.AddTransient<IHypermediaActionsGenerator, HypermediaActionsGenerator>();
             services.AddTransient<IHypermediaClassGenerator, HypermediaClassGenerator>();
@@ -16,6 +17,7 @@ namespace MicroNetCore.Rest.Hypermedia.Extensions
             services.AddTransient<IHypermediaPropertiesGenerator, HypermediaPropertiesGenerator>();
             services.AddTransient<IHypermediaSubEntitiesGenerator, HypermediaSubEntitiesGenerator>();
             services.AddTransient<IHypermediaTitleGenerator, HypermediaTitleGenerator>();
+            services.AddSingleton<IHypermediaFieldMapper, HypermediaFieldMapper>();
 
             return services;
         }

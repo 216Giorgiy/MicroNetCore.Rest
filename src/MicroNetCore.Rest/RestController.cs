@@ -1,9 +1,8 @@
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using MicroNetCore.Data.Abstractions;
 using MicroNetCore.Models;
-using Microsoft.AspNetCore.Http;
+using MicroNetCore.Rest.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MicroNetCore.Rest
@@ -23,11 +22,11 @@ namespace MicroNetCore.Rest
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var paging = GetPaging(Request);
+            var query = Request.Query;
 
-            return Ok(paging == null
-                ? await _repository.FindAsync()
-                : await _repository.FindPageAsync(paging.Value.pageIndex, paging.Value.pageSize));
+            return Request.Query.HasPaging()
+                ? Ok(await _repository.FindPageAsync(query.GetPageIndex(), query.GetPageSize<TModel>()))
+                : Ok(await _repository.FindAsync());
         }
 
         [HttpGet("{id}")]
@@ -55,20 +54,6 @@ namespace MicroNetCore.Rest
         {
             await _repository.DeleteAsync(id);
             return Ok();
-        }
-
-        private static (int pageIndex, int pageSize)? GetPaging(HttpRequest request)
-        {
-            var index = int.TryParse(request.Query["pageIndex"].SingleOrDefault(), out var pageIndex);
-            var size = int.TryParse(request.Query["pageSize"].SingleOrDefault(), out var pageSize);
-
-            if (!index && !size)
-                return null;
-
-            if (!index) pageIndex = 1;
-            if (!size) pageSize = 20;
-
-            return (pageIndex, pageSize);
         }
     }
 }

@@ -1,0 +1,36 @@
+﻿using System.Linq;
+using System.Reflection;
+using MicroNetCore.Rest.Attribites;
+using Microsoft.AspNetCore.Http;
+
+namespace MicroNetCore.Rest.Extensions
+{
+    public static class QueryCollectionExtensions
+    {
+        public static bool HasPaging(this IQueryCollection query)
+        {
+            var index = int.TryParse(query["pageIndex"].SingleOrDefault(), out var _);
+            var size = int.TryParse(query["pageSize"].SingleOrDefault(), out var _);
+
+            return !index && !size;
+        }
+
+        public static int GetPageIndex(this IQueryCollection query)
+        {
+            var index = int.TryParse(query["pageIndex"].SingleOrDefault(), out var pageIndex);
+            return index ? pageIndex : 1;
+        }
+
+        public static int GetPageSize(this IQueryCollection query, int defaultValue = 20)
+        {
+            var size = int.TryParse(query["pageSize"].SingleOrDefault(), out var pageSize);
+            return size ? pageSize : defaultValue;
+        }
+
+        public static int GetPageSize<TModel>(this IQueryCollection query, int defaultValue = 20)
+        {
+            var pageSize = typeof(TModel).GetCustomAttribute<DefaultPageSizeAttribute>()?.PageSize ?? defaultValue;
+            return query.GetPageSize(pageSize);
+        }
+    }
+}

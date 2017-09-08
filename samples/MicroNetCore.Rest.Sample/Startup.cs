@@ -26,7 +26,7 @@ namespace MicroNetCore.Rest.Sample
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvcWithRestControllers(RestTypes);
-            services.AddTransient(typeof(IRepository<>), typeof(FakeRepository<>));
+            services.AddTransient<IRepositoryFactory, FakeRepositoryFactory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

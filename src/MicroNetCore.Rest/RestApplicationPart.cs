@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Humanizer;
 using MicroNetCore.Rest.Extensions;
+using MicroNetCore.Rest.ViewModels;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 
 namespace MicroNetCore.Rest
@@ -30,8 +31,12 @@ namespace MicroNetCore.Rest
         {
             const TypeAttributes typeAttributes = TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Sealed;
 
+            var getType = new ViewModelGenerator().CreateGetModel(modelType);
+            var postType = new ViewModelGenerator().CreatePostModel(modelType);
+            var putType = new ViewModelGenerator().CreatePutModel(modelType);
+
             var typeName = $"{modelType.Name.Pluralize()}Controller";
-            var parentType = typeof(RestController<>).MakeGenericType(modelType);
+            var parentType = typeof(RestController<,,,>).MakeGenericType(modelType, getType, postType, putType);
 
             var typeBuidler = moduleBuilder
                 .DefineType(typeName, typeAttributes, parentType)

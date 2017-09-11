@@ -19,7 +19,7 @@
 
   <ItemGroup>
     <PackageReference Include="Humanizer.Core" Version="2.2.0" />
-    <PackageReference Include="MicroNetCore.Data.Abstractions" Version="0.0.8-alpha" />
+    <PackageReference Include="MicroNetCore.Data.Abstractions" Version="0.0.10-alpha" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Xml" Version="2.0.0" />
@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MicroNetCore.Rest.Hypermedia\MicroNetCore.Rest.Hypermedia.csproj" />
+    <ProjectReference Include="..\MicroNetCore.Rest.ViewModels\MicroNetCore.Rest.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>

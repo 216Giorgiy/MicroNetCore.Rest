@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using MicroNetCore.Data.Abstractions;
+using MicroNetCore.AspNetCore.Paging;
 using MicroNetCore.Models;
 using MicroNetCore.Rest.Hypermedia.Helpers;
 using MicroNetCore.Rest.Hypermedia.Models;
@@ -36,7 +36,7 @@ namespace MicroNetCore.Rest.Hypermedia.Services
             };
         }
 
-        public Link[] Generate<TModel>(IPageCollection<TModel> page)
+        public Link[] Generate<TModel>(Page<TModel> page)
             where TModel : class, IModel
         {
             var links = new List<Link>

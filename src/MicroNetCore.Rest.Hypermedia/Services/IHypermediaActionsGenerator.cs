@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using MicroNetCore.Data.Abstractions;
+using MicroNetCore.AspNetCore.Paging;
 using MicroNetCore.Models;
 using MicroNetCore.Rest.Hypermedia.Models;
 
@@ -13,7 +13,7 @@ namespace MicroNetCore.Rest.Hypermedia.Services
         Action[] Generate<TModel>(ICollection<TModel> models)
             where TModel : class, IModel;
 
-        Action[] Generate<TModel>(IPageCollection<TModel> page)
+        Action[] Generate<TModel>(Page<TModel> page)
             where TModel : class, IModel;
     }
 }

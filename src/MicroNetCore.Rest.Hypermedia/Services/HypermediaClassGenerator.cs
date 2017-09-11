@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using Humanizer;
-using MicroNetCore.Data.Abstractions;
+using MicroNetCore.AspNetCore.Paging;
 using MicroNetCore.Models;
 using MicroNetCore.Rest.Hypermedia.Attributes;
 
@@ -28,7 +28,7 @@ namespace MicroNetCore.Rest.Hypermedia.Services
             };
         }
 
-        public string[] Generate<TModel>(IPageCollection<TModel> page)
+        public string[] Generate<TModel>(Page<TModel> page)
             where TModel : class, IModel
         {
             return new[]

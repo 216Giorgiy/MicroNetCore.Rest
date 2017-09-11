@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using MicroNetCore.Data.Abstractions;
+using MicroNetCore.AspNetCore.Paging;
 using MicroNetCore.Models;
 using MicroNetCore.Rest.Hypermedia.Helpers;
 using MicroNetCore.Rest.Hypermedia.Models;
@@ -47,10 +47,10 @@ namespace MicroNetCore.Rest.Hypermedia.Services
             return models.SelectMany(m => GetParentSubEntity(m, new[] {"item"})).ToArray();
         }
 
-        public SubEntity[] Generate<TModel>(IPageCollection<TModel> page)
+        public SubEntity[] Generate<TModel>(Page<TModel> page)
             where TModel : class, IModel
         {
-            return page.SelectMany(m => GetParentSubEntity(m, new[] {"item"})).ToArray();
+            return page.Items.SelectMany(m => GetParentSubEntity(m, new[] {"item"})).ToArray();
         }
 
         private IEnumerable<SubEntity> GetSubEntities<TModel>(
@@ -101,14 +101,12 @@ namespace MicroNetCore.Rest.Hypermedia.Services
                 Type = "application/json"
             });
         }
-
-        // ReSharper disable once SuggestBaseTypeForParameter
+        
         private static string[] GetParentRelValue(PropertyInfo propertyInfo)
         {
             return new[] {$"{propertyInfo.DeclaringType.Name}-{propertyInfo.Name}".ToLower()};
         }
-
-        // ReSharper disable once SuggestBaseTypeForParameter
+        
         private static string[] GetChildRelValue(PropertyInfo propertyInfo)
         {
             return new[] {$"{propertyInfo.DeclaringType.Name}-{propertyInfo.Name}".ToLower()};

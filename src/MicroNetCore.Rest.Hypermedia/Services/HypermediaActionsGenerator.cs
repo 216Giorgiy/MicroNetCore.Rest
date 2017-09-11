@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Reflection;
 using Humanizer;
-using MicroNetCore.Data.Abstractions;
+using MicroNetCore.AspNetCore.Paging;
 using MicroNetCore.Models;
-using MicroNetCore.Models.Markup;
+using MicroNetCore.Models.Markup.Extensions;
 using MicroNetCore.Rest.Hypermedia.Helpers;
 using MicroNetCore.Rest.Hypermedia.Models;
 
@@ -38,7 +37,7 @@ namespace MicroNetCore.Rest.Hypermedia.Services
             return new Action[0];
         }
 
-        public Action[] Generate<TModel>(IPageCollection<TModel> page)
+        public Action[] Generate<TModel>(Page<TModel> page)
             where TModel : class, IModel
         {
             return new Action[0];
@@ -61,8 +60,7 @@ namespace MicroNetCore.Rest.Hypermedia.Services
         private Action.Field[] GetEditForm<TModel>()
         {
             return typeof(TModel)
-                .GetProperties()
-                .Where(p => p.GetCustomAttribute<EditAttribute>() != null)
+                .GetEditProperties()
                 .Select(p => new Action.Field
                 {
                     Name = p.Name.Camelize(),

@@ -11,20 +11,46 @@ namespace MicroNetCore.Rest.ViewModels
     {
         private readonly ModuleBuilder _moduleBuilder;
 
-        private const TypeAttributes Attributes = TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Sealed;
-
         public ViewModelGenerator()
         {
             _moduleBuilder = CreateModuleBuilder();
         }
 
+        #region Constants
+
+        private const TypeAttributes VmTypeAttributes =
+            TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Sealed;
+
+        private const MethodAttributes VmMethodAttributes =
+            MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
+
+        #endregion
+
         #region IViewModelGenerator
+
+        public Type CreateGetModel(Type type)
+        {
+            ValidateDataModel(type);
+
+            var name = $"{type.Name}GetViewModel";
+            var viewModel = typeof(IResponseViewModel<>).MakeGenericType(type);
+
+            var typeBuilder = GetTypeBuilder(name, viewModel);
+
+            foreach (var property in type.GetShowProperties())
+                Addproperty(typeBuilder, property);
+
+            return typeBuilder.CreateTypeInfo().AsType();
+        }
 
         public Type CreatePostModel(Type type)
         {
             ValidateDataModel(type);
 
-            var typeBuilder = GetTypeBuilder(type, "PostModel");
+            var name = $"{type.Name}PostViewModel";
+            var viewModel = typeof(IRequestViewModel).MakeGenericType(type);
+
+            var typeBuilder = GetTypeBuilder(name, viewModel);
 
             foreach (var property in type.GetAddProperties())
                 Addproperty(typeBuilder, property);
@@ -36,7 +62,10 @@ namespace MicroNetCore.Rest.ViewModels
         {
             ValidateDataModel(type);
 
-            var typeBuilder = GetTypeBuilder(type, "PutModel");
+            var name = $"{type.Name}PutViewModel";
+            var viewModel = typeof(IRequestViewModel<>).MakeGenericType(type);
+
+            var typeBuilder = GetTypeBuilder(name, viewModel);
 
             foreach (var property in type.GetEditProperties())
                 Addproperty(typeBuilder, property);
@@ -44,29 +73,22 @@ namespace MicroNetCore.Rest.ViewModels
             return typeBuilder.CreateTypeInfo().AsType();
         }
 
-        public Type CreateGetModel(Type type)
-        {
-            ValidateDataModel(type);
-
-            var typeBuilder = GetTypeBuilder(type, "ShowModel");
-
-            foreach (var property in type.GetShowProperties())
-                Addproperty(typeBuilder, property);
-
-            return typeBuilder.CreateTypeInfo().AsType();
-        }
-        
         #endregion
 
         #region Helpers
 
-        private static MethodAttributes MethodAttributes =>
-            MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.HideBySig;
-
         private static void ValidateDataModel(Type type)
         {
-            if (!type.GetTypeInfo().IsSubclassOf(typeof(IModel)))
+            if (!typeof(IModel).IsAssignableFrom(type))
                 throw new Exception($"Type {type} is not a Model type.");
+        }
+
+        private TypeBuilder GetTypeBuilder(string name, Type viewModelType)
+        {
+            var builder = _moduleBuilder.DefineType(name, VmTypeAttributes);
+            builder.AddInterfaceImplementation(viewModelType);
+
+            return builder;
         }
 
         private static AssemblyBuilder CreateAssemblyBuilder()
@@ -79,14 +101,6 @@ namespace MicroNetCore.Rest.ViewModels
         {
             var moduleName = Guid.NewGuid().ToString();
             return CreateAssemblyBuilder().DefineDynamicModule(moduleName);
-        }
-
-        private TypeBuilder GetTypeBuilder(Type model, string postfix)
-        {
-            var name = $"{model.Name}{postfix}";
-            var viewModel = typeof(IViewModel<>).MakeGenericType(model);
-
-            return _moduleBuilder.DefineType(name, Attributes, viewModel);
         }
 
         private static void Addproperty(TypeBuilder typeBuilder, PropertyInfo property)
@@ -110,7 +124,7 @@ namespace MicroNetCore.Rest.ViewModels
         {
             var setMethod = typeBuilder.DefineMethod(
                 $"set_{property.Name}",
-                MethodAttributes,
+                VmMethodAttributes,
                 null,
                 new[] {property.PropertyType});
 
@@ -128,7 +142,7 @@ namespace MicroNetCore.Rest.ViewModels
         {
             var getMethod = typeBuilder.DefineMethod(
                 $"get_{property.Name}",
-                MethodAttributes,
+                VmMethodAttributes,
                 property.PropertyType,
                 Type.EmptyTypes);
 

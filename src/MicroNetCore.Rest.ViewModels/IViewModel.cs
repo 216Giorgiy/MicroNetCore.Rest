@@ -2,8 +2,12 @@
 
 namespace MicroNetCore.Rest.ViewModels
 {
-    public interface IViewModel<TModel>
-        where TModel : class, IModel, new()
+    public interface IViewModel
+    {
+    }
+
+    public interface IViewModel<TModel> : IViewModel
+        where TModel : class, IModel
     {
     }
 }

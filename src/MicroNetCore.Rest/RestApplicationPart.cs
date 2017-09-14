@@ -31,18 +31,27 @@ namespace MicroNetCore.Rest
         {
             const TypeAttributes typeAttributes = TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Sealed;
 
-            var getType = new ViewModelGenerator().CreateGetModel(modelType);
-            var postType = new ViewModelGenerator().CreatePostModel(modelType);
-            var putType = new ViewModelGenerator().CreatePutModel(modelType);
+            var viewModelTypeProvider = GetViewModelTypeProvider();
+
+            var postType = viewModelTypeProvider.GetPostViewModel(modelType);
+            var putType = viewModelTypeProvider.GetPutViewModel(modelType);
 
             var typeName = $"{modelType.Name.Pluralize()}Controller";
-            var parentType = typeof(RestController<,,,>).MakeGenericType(modelType, getType, postType, putType);
+            var parentType = typeof(RestController<,,>).MakeGenericType(modelType, postType, putType);
 
             var typeBuidler = moduleBuilder
                 .DefineType(typeName, typeAttributes, parentType)
                 .WithPassThroughConstructors(parentType);
 
             return typeBuidler.CreateType();
+        }
+
+        private static IViewModelTypeProvider GetViewModelTypeProvider()
+        {
+            IViewModelGenerator viewModelGenerator = new ViewModelGenerator();
+            IViewModelTypeProvider viewModelTypeProvider = new ViewModelTypeProvider(viewModelGenerator);
+
+            return viewModelTypeProvider;
         }
     }
 }

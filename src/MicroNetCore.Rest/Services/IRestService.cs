@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using MicroNetCore.Rest.Hypermedia.Models;
 
 namespace MicroNetCore.Rest.Services
 {

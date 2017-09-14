@@ -7,12 +7,14 @@ namespace MicroNetCore.Rest.Extensions
 {
     public static class QueryCollectionExtensions
     {
-        public static bool HasPaging(this IQueryCollection query)
+        public static bool HasPaging(this IQueryCollection query, bool both = false)
         {
             var index = int.TryParse(query["pageIndex"].SingleOrDefault(), out var _);
             var size = int.TryParse(query["pageSize"].SingleOrDefault(), out var _);
 
-            return !index && !size;
+            return both
+                ? index && size
+                : index || size;
         }
 
         public static int GetPageIndex(this IQueryCollection query)

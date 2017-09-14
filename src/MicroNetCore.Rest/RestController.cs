@@ -11,18 +11,19 @@ using Microsoft.AspNetCore.Mvc;
 namespace MicroNetCore.Rest
 {
     [Route("api/[controller]")]
-    public abstract class RestController<TModel, TGet, TPost, TPut> : Controller
+    public abstract class RestController<TModel, TPost, TPut> : Controller, IRestController<TModel, TPost, TPut>
         where TModel : class, IModel, new()
-        where TGet : class, IViewModel<TModel>, new()
-        where TPost : class, IViewModel<TModel>, new()
-        where TPut : class, IViewModel<TModel>, new()
+        where TPost : class, IRequestViewModel<TModel>, new()
+        where TPut : class, IRequestViewModel<TModel>, new()
     {
         private readonly IRepository<TModel> _repository;
-        
-        public RestController(IRepositoryFactory repositoryFactory)
+
+        protected RestController(IRepositoryFactory repositoryFactory)
         {
             _repository = repositoryFactory.Create<TModel>();
         }
+
+        #region IRestController
 
         [HttpGet]
         public async Task<IActionResult> Get()
@@ -32,26 +33,11 @@ namespace MicroNetCore.Rest
             return query.HasPaging() ? await GetPage(query) : await GetAll();
         }
 
-        private async Task<IActionResult> GetAll()
-        {
-            return Ok((await _repository.FindAsync()).ToViewModels<TModel, TGet>());
-        }
-
-        private async Task<IActionResult> GetPage(IQueryCollection queryCollection)
-        {
-            var index = queryCollection.GetPageIndex();
-            var size = queryCollection.GetPageSize<TModel>();
-
-            return Ok((await _repository.FindPageAsync(index, size)).ToViewModels<TModel, TGet>());
-        }
-
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(long id)
         {
             var model = await _repository.GetAsync(id);
-            var viewModel = model.ToViewModel<TModel, TGet>();
-
-            return Ok(viewModel);
+            return Ok(model);
         }
 
         [HttpPost]
@@ -74,5 +60,24 @@ namespace MicroNetCore.Rest
             await _repository.DeleteAsync(id);
             return Ok();
         }
+
+        #endregion
+
+        #region Helpers
+
+        private async Task<IActionResult> GetAll()
+        {
+            return Ok(await _repository.FindAsync());
+        }
+
+        private async Task<IActionResult> GetPage(IQueryCollection queryCollection)
+        {
+            var index = queryCollection.GetPageIndex();
+            var size = queryCollection.GetPageSize<TModel>();
+
+            return Ok(await _repository.FindPageAsync(index, size));
+        }
+
+        #endregion
     }
 }

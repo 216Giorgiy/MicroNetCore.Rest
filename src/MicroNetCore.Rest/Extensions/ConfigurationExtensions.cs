@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using MicroNetCore.Rest.Hypermedia.Extensions;
 using MicroNetCore.Rest.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -25,14 +24,27 @@ namespace MicroNetCore.Rest.Extensions
 
         private static IMvcCoreBuilder AddCustomMvc(this IServiceCollection services)
         {
-            var builder = services.AddMvcCore();
+            return services.AddMvcCore().AddAcceptHeaders().AddFormatters();
+        }
 
+        private static IMvcCoreBuilder AddAcceptHeaders(this IMvcCoreBuilder builder)
+        {
             builder.AddMvcOptions(o => o.RespectBrowserAcceptHeader = true);
 
+            return builder;
+        }
+
+        private static IMvcCoreBuilder AddFormatters(this IMvcCoreBuilder builder)
+        {
+            // Json
             builder.AddJsonFormatters();
             builder.AddJsonOptions(o => o.SerializerSettings.NullValueHandling = NullValueHandling.Ignore);
 
+            // Xml
             builder.AddXmlDataContractSerializerFormatters();
+
+            // Hypermedia
+            builder.AddHypermediaFormatter();
 
             return builder;
         }

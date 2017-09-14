@@ -3,8 +3,6 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using MicroNetCore.Data.Abstractions;
 using MicroNetCore.Models;
-using MicroNetCore.Rest.Hypermedia.Models;
-using MicroNetCore.Rest.Hypermedia.Services;
 
 namespace MicroNetCore.Rest.Services
 {

@@ -1,14 +1,19 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using MicroNetCore.Rest.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MicroNetCore.Rest.MediaTypes.Xml.Extensions
 {
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection AddXml(this IServiceCollection services)
+        public static IRestBuilder AddXml(this IRestBuilder builder)
         {
-            services.AddTransient<IXmlSerializer, XmlSerializer>();
+            // Services
+            builder.ServiceCollection.AddTransient<IXmlSerializer, XmlSerializer>();
 
-            return services;
+            // Formatters
+            builder.AddOutputFormatter(new XmlOutputFormatter());
+
+            return builder;
         }
     }
 }

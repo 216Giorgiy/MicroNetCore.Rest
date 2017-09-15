@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MicroNetCore.Rest.MediaTypes\MicroNetCore.Rest.MediaTypes.csproj" />
-    <ProjectReference Include="..\MicroNetCore.Rest.ViewModels\MicroNetCore.Rest.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>

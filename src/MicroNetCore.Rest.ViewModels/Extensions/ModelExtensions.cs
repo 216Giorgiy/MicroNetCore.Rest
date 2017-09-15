@@ -2,6 +2,7 @@
 using System.Linq;
 using MicroNetCore.AspNetCore.Paging;
 using MicroNetCore.Models;
+using MicroNetCore.Rest.Abstractions;
 
 namespace MicroNetCore.Rest.ViewModels.Extensions
 {

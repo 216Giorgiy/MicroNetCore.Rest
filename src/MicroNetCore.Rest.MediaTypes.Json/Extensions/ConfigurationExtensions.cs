@@ -1,14 +1,19 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using MicroNetCore.Rest.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace MicroNetCore.Rest.MediaTypes.Json.Extensions
 {
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection AddJson(this IServiceCollection services)
+        public static IRestBuilder AddJson(this IRestBuilder builder)
         {
-            services.AddTransient<IJsonSerializer, JsonSerializer>();
+            // Services
+            builder.ServiceCollection.AddTransient<IJsonSerializer, JsonSerializer>();
 
-            return services;
+            // Formatters
+            builder.AddOutputFormatter(new JsonOutputFormatter());
+
+            return builder;
         }
     }
 }

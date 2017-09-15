@@ -1,13 +1,13 @@
 ﻿using System.IO;
 using System.Text;
 using System.Xml;
-using MicroNetCore.Rest.DataTransferObjects;
+using MicroNetCore.Rest.Abstractions;
 
 namespace MicroNetCore.Rest.MediaTypes.Xml
 {
     public sealed class XmlSerializer : IXmlSerializer
     {
-        public string Serialize(RestObject restObject, Encoding encoding)
+        public string Serialize(IRestResult restObject, Encoding encoding)
         {
             var serializer = new System.Xml.Serialization.XmlSerializer(restObject.Object.GetType());
 

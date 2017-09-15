@@ -1,56 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
-using MicroNetCore.Rest.MediaTypes.Hypermedia;
-using MicroNetCore.Rest.MediaTypes.Hypermedia.Extensions;
-using MicroNetCore.Rest.MediaTypes.Json;
-using MicroNetCore.Rest.MediaTypes.Json.Extensions;
-using MicroNetCore.Rest.MediaTypes.Xml;
-using MicroNetCore.Rest.MediaTypes.Xml.Extensions;
+using MicroNetCore.Rest.Abstractions;
+using MicroNetCore.Rest.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MicroNetCore.Rest.Extensions
 {
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection AddMvcWithRestControllers(this IServiceCollection services,
-            IEnumerable<Type> restTypes)
+        public static IRestBuilder AddRest(this IServiceCollection services, IEnumerable<Type> types)
         {
-            services.AddCustomMvc()
-                .ConfigureApplicationPartManager(apm => apm.ApplicationParts.Add(new RestApplicationPart(restTypes)));
+            var restPart = new RestApplicationPart(types);
 
-            services.AddRestHypermedia();
-            services.AddJson();
-            services.AddXml();
+            var mvcCoreBuilder = services
+                .AddMvcCore()
+                .AddMvcOptions(o => o.RespectBrowserAcceptHeader = true)
+                .ConfigureApplicationPartManager(apm => apm.ApplicationParts.Add(restPart));
 
-            return services;
+            return new RestBuilder(mvcCoreBuilder, services);
         }
-
-        #region Helpers
-
-        private static IMvcCoreBuilder AddCustomMvc(this IServiceCollection services)
-        {
-            return services.AddMvcCore().AddAcceptHeaders().AddFormatters();
-        }
-
-        private static IMvcCoreBuilder AddAcceptHeaders(this IMvcCoreBuilder builder)
-        {
-            builder.AddMvcOptions(o => o.RespectBrowserAcceptHeader = true);
-
-            return builder;
-        }
-
-        private static IMvcCoreBuilder AddFormatters(this IMvcCoreBuilder builder)
-        {
-            builder.AddMvcOptions(o =>
-            {
-                o.OutputFormatters.Add(new JsonOutputFormatter());
-                o.OutputFormatters.Add(new XmlOutputFormatter());
-                o.OutputFormatters.Add(new HypermediaOutputFormatter());
-            });
-
-            return builder;
-        }
-
-        #endregion
     }
 }

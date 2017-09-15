@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MicroNetCore.Rest.Abstractions\MicroNetCore.Rest.Abstractions.csproj" />
     <ProjectReference Include="..\MicroNetCore.Rest.DataTransferObjects\MicroNetCore.Rest.DataTransferObjects.csproj" />
+    <ProjectReference Include="..\MicroNetCore.Rest.ViewModels\MicroNetCore.Rest.ViewModels.csproj" />
   </ItemGroup>
 
 </Project>

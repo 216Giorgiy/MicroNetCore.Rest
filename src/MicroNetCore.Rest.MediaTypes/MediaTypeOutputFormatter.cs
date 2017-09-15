@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using MicroNetCore.Rest.DataTransferObjects;
+using MicroNetCore.Rest.Abstractions;
 using MicroNetCore.Rest.MediaTypes.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -13,7 +13,7 @@ using Microsoft.Net.Http.Headers;
 namespace MicroNetCore.Rest.MediaTypes
 {
     public abstract class MediaTypeOutputFormatter<TSerializer> : TextOutputFormatter
-        where TSerializer : class, IObjectSerializer
+        where TSerializer : class, IRestSerializer
     {
         protected MediaTypeOutputFormatter()
         {
@@ -30,18 +30,18 @@ namespace MicroNetCore.Rest.MediaTypes
             OutputFormatterWriteContext context,
             Encoding selectedEncoding)
         {
-            var restObject = (RestObject) context.Object;
+            var restResult = (IRestResult) context.Object;
             var serializer = context.HttpContext.RequestServices.GetService<TSerializer>();
 
             await context.HttpContext.Response.WriteAsync(
-                serializer.Serialize(restObject, selectedEncoding),
+                serializer.Serialize(restResult, selectedEncoding),
                 selectedEncoding,
                 context.HttpContext.RequestAborted);
         }
 
         protected sealed override bool CanWriteType(Type type)
         {
-            return typeof(RestObject).IsAssignableFrom(type);
+            return typeof(IRestResult).IsAssignableFrom(type);
         }
 
         #endregion

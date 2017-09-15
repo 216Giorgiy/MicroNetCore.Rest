@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using MicroNetCore.Data.Abstractions;
 using MicroNetCore.Rest.Extensions;
+using MicroNetCore.Rest.MediaTypes.Hypermedia.Extensions;
+using MicroNetCore.Rest.MediaTypes.Json.Extensions;
 using MicroNetCore.Rest.Sample.Data;
 using MicroNetCore.Rest.Sample.Models;
 using Microsoft.AspNetCore.Builder;
@@ -25,7 +27,7 @@ namespace MicroNetCore.Rest.Sample
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvcWithRestControllers(RestTypes);
+            services.AddRest(RestTypes).AddJson().AddHypermedia();
             services.AddTransient<IRepositoryFactory, FakeRepositoryFactory>();
         }
 

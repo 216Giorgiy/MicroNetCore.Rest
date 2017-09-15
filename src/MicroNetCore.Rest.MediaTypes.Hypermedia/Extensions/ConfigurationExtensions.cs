@@ -1,4 +1,5 @@
-﻿using MicroNetCore.Rest.MediaTypes.Hypermedia.Helpers;
+﻿using MicroNetCore.Rest.Abstractions;
+using MicroNetCore.Rest.MediaTypes.Hypermedia.Helpers;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Services;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -6,34 +7,22 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Extensions
 {
     public static class ConfigurationExtensions
     {
-        public static IServiceCollection AddRestHypermedia(this IServiceCollection services)
+        public static IRestBuilder AddHypermedia(this IRestBuilder builder)
         {
-            services.AddSingleton<IApiHelper, ApiHelper>();
+            // Services
+            builder.ServiceCollection.AddSingleton<IApiHelper, ApiHelper>();
+            builder.ServiceCollection.AddTransient<IHypermediaSerializer, HypermediaSerializer>();
+            builder.ServiceCollection.AddTransient<IHypermediaActionFormService, HypermediaActionsFormService>();
+            builder.ServiceCollection.AddTransient<IHypermediaActionsService, HypermediaActionsService>();
+            builder.ServiceCollection.AddTransient<IHypermediaClassService, HypermediaClassService>();
+            builder.ServiceCollection.AddSingleton<IHypermediaFieldService, HypermediaFieldService>();
+            builder.ServiceCollection.AddTransient<IHypermediaLinksService, HypermediaLinksService>();
+            builder.ServiceCollection.AddTransient<IHypermediaPropertiesService, HypermediaPropertiesService>();
+            builder.ServiceCollection.AddTransient<IHypermediaSubEntitiesService, HypermediaSubEntitiesService>();
+            builder.ServiceCollection.AddTransient<IHypermediaTitleGenerator, HypermediaTitleService>();
 
-            services.AddTransient<IHypermediaSerializer, HypermediaSerializer>();
-
-            services.AddTransient<IHypermediaActionFormService, HypermediaActionsFormService>();
-            services.AddTransient<IHypermediaActionsService, HypermediaActionsService>();
-            services.AddTransient<IHypermediaClassService, HypermediaClassService>();
-            services.AddSingleton<IHypermediaFieldService, HypermediaFieldService>();
-            services.AddTransient<IHypermediaLinksService, HypermediaLinksService>();
-            services.AddTransient<IHypermediaPropertiesService, HypermediaPropertiesService>();
-            services.AddTransient<IHypermediaSubEntitiesService, HypermediaSubEntitiesService>();
-            services.AddTransient<IHypermediaTitleGenerator, HypermediaTitleService>();
-
-            return services;
-        }
-
-        public static IMvcBuilder AddHypermediaFormatter(this IMvcBuilder builder)
-        {
-            builder.AddMvcOptions(o => o.OutputFormatters.Add(new HypermediaOutputFormatter()));
-
-            return builder;
-        }
-
-        public static IMvcCoreBuilder AddHypermediaFormatter(this IMvcCoreBuilder builder)
-        {
-            builder.AddMvcOptions(o => o.OutputFormatters.Add(new HypermediaOutputFormatter()));
+            // Formatters
+            builder.AddOutputFormatter(new HypermediaOutputFormatter());
 
             return builder;
         }

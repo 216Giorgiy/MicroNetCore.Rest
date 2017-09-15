@@ -2,9 +2,9 @@ using System.Net;
 using System.Threading.Tasks;
 using MicroNetCore.Data.Abstractions;
 using MicroNetCore.Models;
+using MicroNetCore.Rest.Abstractions;
 using MicroNetCore.Rest.DataTransferObjects;
 using MicroNetCore.Rest.Extensions;
-using MicroNetCore.Rest.ViewModels;
 using MicroNetCore.Rest.ViewModels.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +27,7 @@ namespace MicroNetCore.Rest
         #region IRestController
 
         [HttpGet]
-        public async Task<RestObject> Get()
+        public async Task<IRestResult> Get()
         {
             var query = Request.Query;
 
@@ -38,7 +38,7 @@ namespace MicroNetCore.Rest
         }
 
         [HttpGet("{id}")]
-        public async Task<RestObject> Get(long id)
+        public async Task<IRestResult> Get(long id)
         {
             return new RestModel(typeof(TModel), await _repository.GetAsync(id));
         }

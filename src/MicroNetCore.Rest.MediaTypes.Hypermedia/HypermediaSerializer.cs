@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using MicroNetCore.Rest.Abstractions;
 using MicroNetCore.Rest.DataTransferObjects;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Models;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Services;
@@ -43,15 +44,15 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia
             _titleGenerator = titleGenerator;
         }
 
-        public string Serialize(RestObject obj, Encoding encoding)
+        public string Serialize(IRestResult result, Encoding encoding)
         {
-            var entity = CreateEntity(obj);
+            var entity = CreateEntity(result);
             return JsonConvert.SerializeObject(entity, Settings);
         }
 
         #region Helpers
 
-        private Entity CreateEntity(RestObject obj)
+        private Entity CreateEntity(IRestResult obj)
         {
             switch (obj)
             {

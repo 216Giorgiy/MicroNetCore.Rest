@@ -4,6 +4,7 @@ using System.Reflection.Emit;
 using Humanizer;
 using MicroNetCore.Models;
 using MicroNetCore.Models.Markup.Extensions;
+using MicroNetCore.Rest.Abstractions;
 
 namespace MicroNetCore.Rest.ViewModels
 {

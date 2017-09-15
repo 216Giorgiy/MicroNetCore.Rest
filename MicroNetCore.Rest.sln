@@ -25,6 +25,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroNetCore.Rest.MediaType
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroNetCore.Rest.DataTransferObjects", "src\MicroNetCore.Rest.DataTransferObjects\MicroNetCore.Rest.DataTransferObjects.csproj", "{0BF07B12-2923-4334-B47F-7E54B1D37CAB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroNetCore.Rest.Abstractions", "src\MicroNetCore.Rest.Abstractions\MicroNetCore.Rest.Abstractions.csproj", "{98CC2224-E5D0-4F21-AAC5-080E4FDCB2CD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{0BF07B12-2923-4334-B47F-7E54B1D37CAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BF07B12-2923-4334-B47F-7E54B1D37CAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0BF07B12-2923-4334-B47F-7E54B1D37CAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{98CC2224-E5D0-4F21-AAC5-080E4FDCB2CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{98CC2224-E5D0-4F21-AAC5-080E4FDCB2CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{98CC2224-E5D0-4F21-AAC5-080E4FDCB2CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{98CC2224-E5D0-4F21-AAC5-080E4FDCB2CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,6 +82,7 @@ Global
 		{5B3D89AD-FC32-4925-819E-FC5B126576C6} = {8079A543-E283-46E7-878E-423115C0327D}
 		{559370D8-0E68-4A2C-9EB5-DEAAF0FEC26D} = {8079A543-E283-46E7-878E-423115C0327D}
 		{0BF07B12-2923-4334-B47F-7E54B1D37CAB} = {8079A543-E283-46E7-878E-423115C0327D}
+		{98CC2224-E5D0-4F21-AAC5-080E4FDCB2CD} = {8079A543-E283-46E7-878E-423115C0327D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A6377214-CE52-4F08-8633-57B7FDCC5BB1}

@@ -1,12 +1,10 @@
-﻿namespace MicroNetCore.Rest.MediaTypes.Json
-{
-    public sealed class JsonOutputFormatter : MediaTypeOutputFormatter<JsonSerializer>
-    {
-        private const string MediaTypeName = "application/json";
+﻿using MicroNetCore.Rest.MediaTypes.Attributes;
 
-        public JsonOutputFormatter()
-            : base(MediaTypeName)
-        {
-        }
+namespace MicroNetCore.Rest.MediaTypes.Json
+{
+    [Encodings(EncodingCode.Utf8)]
+    [MediaTypes("application/json")]
+    public sealed class JsonOutputFormatter : MediaTypeOutputFormatter<IJsonSerializer>
+    {
     }
 }

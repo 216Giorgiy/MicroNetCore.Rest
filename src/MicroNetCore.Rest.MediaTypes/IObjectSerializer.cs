@@ -1,7 +1,10 @@
-﻿namespace MicroNetCore.Rest.MediaTypes
+﻿using System.Text;
+using MicroNetCore.Rest.DataTransferObjects;
+
+namespace MicroNetCore.Rest.MediaTypes
 {
     public interface IObjectSerializer
     {
-        string Serialize(object obj);
+        string Serialize(RestObject obj, Encoding encoding);
     }
 }

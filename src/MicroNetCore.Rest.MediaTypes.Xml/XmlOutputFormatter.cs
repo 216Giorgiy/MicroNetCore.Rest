@@ -1,12 +1,10 @@
-﻿namespace MicroNetCore.Rest.MediaTypes.Xml
-{
-    public sealed class XmlOutputFormatter : MediaTypeOutputFormatter<XmlSerializer>
-    {
-        private const string MediaTypeName = "application/xml";
+﻿using MicroNetCore.Rest.MediaTypes.Attributes;
 
-        public XmlOutputFormatter()
-            : base(MediaTypeName)
-        {
-        }
+namespace MicroNetCore.Rest.MediaTypes.Xml
+{
+    [Encodings(EncodingCode.Utf8)]
+    [MediaTypes("application/xml")]
+    public sealed class XmlOutputFormatter : MediaTypeOutputFormatter<IXmlSerializer>
+    {
     }
 }

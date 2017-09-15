@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using MicroNetCore.Rest.Services;
+using MicroNetCore.Rest.MediaTypes.Hypermedia;
+using MicroNetCore.Rest.MediaTypes.Hypermedia.Extensions;
+using MicroNetCore.Rest.MediaTypes.Json;
+using MicroNetCore.Rest.MediaTypes.Json.Extensions;
+using MicroNetCore.Rest.MediaTypes.Xml;
+using MicroNetCore.Rest.MediaTypes.Xml.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 
 namespace MicroNetCore.Rest.Extensions
 {
@@ -14,8 +18,9 @@ namespace MicroNetCore.Rest.Extensions
             services.AddCustomMvc()
                 .ConfigureApplicationPartManager(apm => apm.ApplicationParts.Add(new RestApplicationPart(restTypes)));
 
-            services.AddTransient(typeof(IRestService<>), typeof(RestService<>));
             services.AddRestHypermedia();
+            services.AddJson();
+            services.AddXml();
 
             return services;
         }
@@ -36,15 +41,12 @@ namespace MicroNetCore.Rest.Extensions
 
         private static IMvcCoreBuilder AddFormatters(this IMvcCoreBuilder builder)
         {
-            // Json
-            builder.AddJsonFormatters();
-            builder.AddJsonOptions(o => o.SerializerSettings.NullValueHandling = NullValueHandling.Ignore);
-
-            // Xml
-            builder.AddXmlDataContractSerializerFormatters();
-
-            // Hypermedia
-            builder.AddHypermediaFormatter();
+            builder.AddMvcOptions(o =>
+            {
+                o.OutputFormatters.Add(new JsonOutputFormatter());
+                o.OutputFormatters.Add(new XmlOutputFormatter());
+                o.OutputFormatters.Add(new HypermediaOutputFormatter());
+            });
 
             return builder;
         }

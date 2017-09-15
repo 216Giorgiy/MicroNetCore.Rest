@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Models
 {
@@ -27,7 +28,7 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Models
 
         // Optional
         [DataMember(Order = 6)]
-        public Field[] Fields { get; set; }
+        public IEnumerable<Field> Fields { get; set; }
 
         // Optional
         [DataMember(Order = 7)]

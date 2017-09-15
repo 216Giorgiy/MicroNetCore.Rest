@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MicroNetCore.Rest.DataTransferObjects;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Helpers;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Models;
 
@@ -16,36 +17,39 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 
         #region IHypermediaLinksGenerator
 
-        public Link[] Get(IResponseViewModel viewModel)
+        public IEnumerable<Link> Get(Type type, long id)
         {
             return new[]
             {
-                GetSelfLink(viewModel.GetType(), viewModel.Id)
+                GetSelfLink(type, id)
             };
         }
 
-        public Link[] Get(IEnumerable<IResponseViewModel> viewModels)
+        public IEnumerable<Link> Get(RestModel model)
+        {
+            return Get(model.Type, model.Model.Id);
+        }
+
+        public IEnumerable<Link> Get(RestModels models)
         {
             return new[]
             {
-                GetSelfLink(viewModels.GetType().GetGenericArguments()[0])
+                GetSelfLink(models.Type)
             };
         }
 
-        public Link[] Get(IEnumerablePage<IResponseViewModel> page)
+        public IEnumerable<Link> Get(RestPage page)
         {
-            var type = page.GetType().GetGenericArguments()[0];
-
             var links = new List<Link>
             {
-                GetSelfLink(type, page.PageIndex, page.PageSize)
+                GetSelfLink(page.Type, page.Page.PageIndex, page.Page.PageSize)
             };
 
-            if (page.PageIndex > 1)
-                links.Add(GetPrevLink(type, page.PageIndex, page.PageSize));
+            if (page.Page.PageIndex > 1)
+                links.Add(GetPrevLink(page.Type, page.Page.PageIndex, page.Page.PageSize));
 
-            if (page.PageIndex < page.PageCount)
-                links.Add(GetNextLink(type, page.PageIndex, page.PageSize));
+            if (page.Page.PageIndex < page.Page.PageCount)
+                links.Add(GetNextLink(page.Type, page.Page.PageIndex, page.Page.PageSize));
 
             return links.ToArray();
         }

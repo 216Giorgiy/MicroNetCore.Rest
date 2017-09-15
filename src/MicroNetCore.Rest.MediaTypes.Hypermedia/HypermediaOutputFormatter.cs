@@ -4,7 +4,7 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia
 {
     [Encodings(EncodingCode.Utf8)]
     [MediaTypes("application/vnd.micronetcore+json")]
-    public sealed class HypermediaOutputFormatter : MediaTypeOutputFormatter<HypermediaSerializer>
+    public sealed class HypermediaOutputFormatter : MediaTypeOutputFormatter<IHypermediaSerializer>
     {
     }
 }

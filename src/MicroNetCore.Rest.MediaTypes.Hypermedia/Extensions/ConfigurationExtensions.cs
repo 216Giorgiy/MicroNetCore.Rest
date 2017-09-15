@@ -10,13 +10,16 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Extensions
         {
             services.AddSingleton<IApiHelper, ApiHelper>();
 
+            services.AddTransient<IHypermediaSerializer, HypermediaSerializer>();
+
+            services.AddTransient<IHypermediaActionFormService, HypermediaActionsFormService>();
             services.AddTransient<IHypermediaActionsService, HypermediaActionsService>();
             services.AddTransient<IHypermediaClassService, HypermediaClassService>();
+            services.AddSingleton<IHypermediaFieldService, HypermediaFieldService>();
             services.AddTransient<IHypermediaLinksService, HypermediaLinksService>();
             services.AddTransient<IHypermediaPropertiesService, HypermediaPropertiesService>();
             services.AddTransient<IHypermediaSubEntitiesService, HypermediaSubEntitiesService>();
             services.AddTransient<IHypermediaTitleGenerator, HypermediaTitleService>();
-            services.AddSingleton<IHypermediaFieldService, HypermediaFieldService>();
 
             return services;
         }

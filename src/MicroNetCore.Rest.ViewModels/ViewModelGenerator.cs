@@ -48,7 +48,7 @@ namespace MicroNetCore.Rest.ViewModels
             ValidateDataModel(type);
 
             var name = $"{type.Name}PostViewModel";
-            var viewModel = typeof(IRequestViewModel).MakeGenericType(type);
+            var viewModel = typeof(IRequestViewModel<>).MakeGenericType(type);
 
             var typeBuilder = GetTypeBuilder(name, viewModel);
 

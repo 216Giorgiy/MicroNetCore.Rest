@@ -1,89 +1,76 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using MicroNetCore.Models;
+using MicroNetCore.Rest.DataTransferObjects;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Helpers;
-using MicroNetCore.Rest.MediaTypes.Hypermedia.Models;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Models.Actions;
+using Action = MicroNetCore.Rest.MediaTypes.Hypermedia.Models.Action;
 
 namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 {
     public sealed class HypermediaActionsService : IHypermediaActionsService
     {
+        private readonly IHypermediaActionFormService _actionFormService;
         private readonly IApiHelper _apiHelper;
-        private readonly IHypermediaFieldService _fieldMapper;
 
-        public HypermediaActionsService(IApiHelper apiHelper, IHypermediaFieldService fieldMapper)
+        public HypermediaActionsService(IApiHelper apiHelper, IHypermediaActionFormService actionFormService)
         {
             _apiHelper = apiHelper;
-            _fieldMapper = fieldMapper;
+            _actionFormService = actionFormService;
         }
 
         #region IHypermediaActionsGenerator
 
-        public Action[] Get(IResponseViewModel obj)
+        public IEnumerable<Action> Get(RestModel model)
         {
             return new[]
             {
-                GetEditAction(obj),
-                GetDeleteAction(obj)
+                GetEditAction(model.Type, model.Model),
+                GetDeleteAction(model.Type, model.Model)
             };
         }
 
-        public Action[] Get(IEnumerable<IResponseViewModel> collection)
+        public IEnumerable<Action> Get(RestModels models)
         {
             return new[]
             {
-                GetAddAction()
+                GetAddAction(models.Type)
             };
         }
 
-        public Action[] Get(IEnumerablePage<IResponseViewModel> page)
+        public IEnumerable<Action> Get(RestPage page)
         {
-            return new Action[0];
+            return new[]
+            {
+                GetAddAction(page.Type)
+            };
         }
 
         #endregion
 
         #region Helpers
 
-        private Action GetAddAction()
+        private Action GetAddAction(Type modelType)
         {
-            return new AddAction();
+            return new AddAction(
+                modelType,
+                _apiHelper.GetUri(modelType),
+                _actionFormService.GetAddForm(modelType));
         }
 
-        private Action GetEditAction(IResponseViewModel viewModel)
+        private Action GetEditAction(Type modelType, IModel model)
         {
-            return new EditAction();
-            //return new Action
-            //{
-            //    Name = $"edit-{typeof(TModel).Name}".ToLower(),
-            //    Href = _apiHelper.GetUri(viewModel.GetType(), viewModel.Id),
-            //    Method = HttpMethod.Put.ToString(),
-            //    Title = $"Edit {typeof(TModel).Name}",
-            //    Type = "application/json",
-            //    Fields = GetEditForm<TModel>()
-            //};
+            return new EditAction(
+                modelType,
+                _apiHelper.GetUri(modelType, model.Id),
+                _actionFormService.GetAddForm(modelType));
         }
 
-        private Field[] GetEditForm<TModel>()
+        private Action GetDeleteAction(Type modelType, IModel model)
         {
-            return typeof(TModel)
-                .GetEditProperties()
-                .Select(p => new Field
-                {
-                    Name = p.Name.Camelize(),
-                    Type = _fieldMapper.Map(p.PropertyType)
-                }).ToArray();
-        }
-
-        private Action GetDeleteAction(IResponseViewModel viewModel)
-        {
-            return new DeleteAction();
-            //return new Action
-            //{
-            //    Name = $"delete-{typeof(TModel).Name}".ToLower(),
-            //    Href = _apiHelper.GetUri(viewModel.GetType(), viewModel.Id),
-            //    Method = HttpMethod.Delete.ToString(),
-            //    Title = $"Delete {typeof(TModel).Name}"
-            //};
+            return new DeleteAction(
+                modelType,
+                _apiHelper.GetUri(modelType, model.Id));
         }
 
         #endregion

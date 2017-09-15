@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
 
 namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 {
     public interface IHypermediaTitleGenerator
     {
-        string Get(IResponseViewModel model);
-        string Get(IEnumerable<IResponseViewModel> models);
-        string Get(IEnumerablePage<IResponseViewModel> page);
+        string Get(Type type);
     }
 }

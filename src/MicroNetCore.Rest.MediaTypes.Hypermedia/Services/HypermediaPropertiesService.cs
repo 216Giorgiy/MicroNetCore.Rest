@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using MicroNetCore.Rest.DataTransferObjects;
+using MicroNetCore.Rest.MediaTypes.Hypermedia.Extensions;
 
 namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 {
@@ -6,27 +10,31 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
     {
         #region IHypermediaPropertiesService
 
-        public IDictionary<string, object> Get(IViewModel viewModel)
+        public IDictionary<string, object> Get(Type type, object obj)
         {
-            return viewModel
-                .GetType()
+            return type
                 .GetProperties()
-                .Where(p => !HypermediaSubEntitiesService.IsSubEntityType(p.PropertyType))
-                .ToDictionary(p => p.Name, p => p.GetValue(viewModel));
+                .Where(p => !p.IsSubEntityType())
+                .ToDictionary(p => p.Name, p => p.GetValue(obj));
         }
 
-        public IDictionary<string, object> Get(IEnumerable<IViewModel> viewModels)
+        public IDictionary<string, object> Get(RestModel model)
+        {
+            return Get(model.Type, model.Model);
+        }
+
+        public IDictionary<string, object> Get(RestModels models)
         {
             return new Dictionary<string, object>();
         }
 
-        public IDictionary<string, object> Get(IEnumerablePage<IViewModel> page)
+        public IDictionary<string, object> Get(RestPage page)
         {
             return new Dictionary<string, object>
             {
-                {nameof(page.PageCount), page.PageCount},
-                {nameof(page.PageIndex), page.PageIndex},
-                {nameof(page.PageSize), page.PageSize}
+                {nameof(page.Page.PageCount), page.Page.PageCount},
+                {nameof(page.Page.PageIndex), page.Page.PageIndex},
+                {nameof(page.Page.PageSize), page.Page.PageSize}
             };
         }
 

@@ -2,6 +2,7 @@ using System.Net;
 using System.Threading.Tasks;
 using MicroNetCore.Data.Abstractions;
 using MicroNetCore.Models;
+using MicroNetCore.Rest.DataTransferObjects;
 using MicroNetCore.Rest.Extensions;
 using MicroNetCore.Rest.ViewModels;
 using MicroNetCore.Rest.ViewModels.Extensions;
@@ -18,7 +19,7 @@ namespace MicroNetCore.Rest
     {
         private readonly IRepository<TModel> _repository;
 
-        protected RestController(IRepositoryFactory repositoryFactory)
+        public RestController(IRepositoryFactory repositoryFactory)
         {
             _repository = repositoryFactory.Create<TModel>();
         }
@@ -26,18 +27,20 @@ namespace MicroNetCore.Rest
         #region IRestController
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<RestObject> Get()
         {
             var query = Request.Query;
 
-            return query.HasPaging() ? await GetPage(query) : await GetAll();
+            if (query.HasPaging())
+                return await GetPage(query);
+
+            return await GetAll();
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(long id)
+        public async Task<RestObject> Get(long id)
         {
-            var model = await _repository.GetAsync(id);
-            return Ok(model);
+            return new RestModel(typeof(TModel), await _repository.GetAsync(id));
         }
 
         [HttpPost]
@@ -65,17 +68,17 @@ namespace MicroNetCore.Rest
 
         #region Helpers
 
-        private async Task<IActionResult> GetAll()
+        private async Task<RestModels> GetAll()
         {
-            return Ok(await _repository.FindAsync());
+            return new RestModels(typeof(TModel), await _repository.FindAsync());
         }
 
-        private async Task<IActionResult> GetPage(IQueryCollection queryCollection)
+        private async Task<RestPage> GetPage(IQueryCollection queryCollection)
         {
             var index = queryCollection.GetPageIndex();
             var size = queryCollection.GetPageSize<TModel>();
 
-            return Ok(await _repository.FindPageAsync(index, size));
+            return new RestPage(typeof(TModel), await _repository.FindPageAsync(index, size));
         }
 
         #endregion

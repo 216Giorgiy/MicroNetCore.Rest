@@ -8,7 +8,7 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Models
     {
         // Optional
         [DataMember(Order = 1)]
-        public string[] Class { get; set; }
+        public IEnumerable<string> Class { get; set; }
 
         // Optional
         [DataMember(Order = 2)]
@@ -16,15 +16,15 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Models
 
         // Optional
         [DataMember(Order = 3)]
-        public SubEntity[] Entities { get; set; }
+        public IEnumerable<SubEntity> Entities { get; set; }
 
         // Optional
         [DataMember(Order = 4)]
-        public Action[] Actions { get; set; }
+        public IEnumerable<Action> Actions { get; set; }
 
         // Optional
         [DataMember(Order = 5)]
-        public Link[] Links { get; set; }
+        public IEnumerable<Link> Links { get; set; }
 
         // Optional
         [DataMember(Order = 6)]

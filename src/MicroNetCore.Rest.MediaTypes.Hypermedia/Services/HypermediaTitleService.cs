@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Attributes;
 
@@ -6,27 +7,36 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 {
     public sealed class HypermediaTitleService : IHypermediaTitleGenerator
     {
-        public string Generate<TModel>(TModel model)
-            where TModel : class, IModel
+        #region IHypermediaTitleGenerator
+
+        public string Get(Type type)
         {
-            return GetTitle<TModel>();
+            if (!Cache.ContainsKey(type))
+                Cache.Add(type, Create(type));
+
+            return Cache[type];
         }
 
-        public string Generate<TModel>(ICollection<TModel> models)
-            where TModel : class, IModel
+        #endregion
+
+        #region Helpers
+
+        private static string Create(MemberInfo type)
         {
-            return GetTitle<TModel>();
+            return type.GetCustomAttribute<TitleAttribute>()?.Title;
         }
 
-        public string Generate<TModel>(IEnumerablePage<TModel> page)
-            where TModel : class, IModel
+        #endregion
+
+        #region Static
+
+        private static readonly IDictionary<Type, string> Cache;
+
+        static HypermediaTitleService()
         {
-            return GetTitle<TModel>();
+            Cache = new Dictionary<Type, string>();
         }
 
-        private static string GetTitle<TModel>()
-        {
-            return typeof(TModel).GetCustomAttribute<TitleAttribute>()?.Title;
-        }
+        #endregion
     }
 }

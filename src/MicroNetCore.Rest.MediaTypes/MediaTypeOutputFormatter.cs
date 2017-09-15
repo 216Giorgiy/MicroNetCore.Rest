@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using MicroNetCore.Models;
+using MicroNetCore.Rest.DataTransferObjects;
 using MicroNetCore.Rest.MediaTypes.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
@@ -30,33 +30,33 @@ namespace MicroNetCore.Rest.MediaTypes
             OutputFormatterWriteContext context,
             Encoding selectedEncoding)
         {
+            var restObject = (RestObject) context.Object;
             var serializer = context.HttpContext.RequestServices.GetService<TSerializer>();
 
             await context.HttpContext.Response.WriteAsync(
-                serializer.Serialize(context.Object),
+                serializer.Serialize(restObject, selectedEncoding),
                 selectedEncoding,
                 context.HttpContext.RequestAborted);
         }
 
         protected sealed override bool CanWriteType(Type type)
         {
-            return typeof(IModel).IsAssignableFrom(type);
+            return typeof(RestObject).IsAssignableFrom(type);
         }
 
         #endregion
 
         #region Helpers
 
-        private static IEnumerable<MediaTypeHeaderValue> GetMediaTypes()
+        private IEnumerable<MediaTypeHeaderValue> GetMediaTypes()
         {
-            return typeof(TSerializer)
-                .GetCustomAttribute<MediaTypesAttribute>()
+            return GetType().GetCustomAttribute<MediaTypesAttribute>()
                 .MediaTypes;
         }
 
-        private static IEnumerable<Encoding> GetEncodings()
+        private IEnumerable<Encoding> GetEncodings()
         {
-            return typeof(TSerializer)
+            return GetType()
                 .GetCustomAttribute<EncodingsAttribute>()
                 .Encodings;
         }

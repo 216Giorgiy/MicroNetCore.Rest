@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using MicroNetCore.Models;
+using MicroNetCore.Rest.DataTransferObjects;
+using MicroNetCore.Rest.MediaTypes.Hypermedia.Extensions;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Helpers;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Models;
 
@@ -31,24 +34,23 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 
         #region IHypermediaSubEntitiesGenerator
 
-        public SubEntity[] Get(IViewModel viewModel)
+        public IEnumerable<SubEntity> Get(RestModel model)
         {
-            return viewModel
-                .GetType()
+            return model.Type
                 .GetProperties()
-                .Where(p => IsSubEntityType(p.PropertyType))
-                .SelectMany(p => GetSubEntities(p, viewModel))
+                .Where(p => p.IsSubEntityType())
+                .SelectMany(p => GetSubEntities(p, model.Model))
                 .ToArray();
         }
 
-        public SubEntity[] Get(IEnumerable<IViewModel> viewModels)
+        public IEnumerable<SubEntity> Get(RestModels models)
         {
-            return viewModels.SelectMany(m => GetParentSubEntity(m, new[] {"item"})).ToArray();
+            return models.Models.SelectMany(m => GetParentSubEntity(models.Type, m, new[] {"item"}));
         }
 
-        public SubEntity[] Get(IEnumerablePage<IViewModel> page)
+        public IEnumerable<SubEntity> Get(RestPage page)
         {
-            return page.Items.SelectMany(m => GetParentSubEntity(m, new[] {"item"})).ToArray();
+            return page.Page.Items.SelectMany(m => GetParentSubEntity(page.Type, m, new[] {"item"}));
         }
 
         #endregion
@@ -56,66 +58,65 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
         #region Helpers
 
         private IEnumerable<SubEntity> GetSubEntities(
-            PropertyInfo propertyInfo, IViewModel viewModel)
+            PropertyInfo propertyInfo, object parent)
         {
-            var value = propertyInfo.GetValue(viewModel);
+            var value = propertyInfo.GetValue(parent);
 
-            switch (value)
-            {
-                case null:
-                    return new SubEntity[0];
-                case IModel iModel:
-                    return GetParentSubEntity(iModel, GetParentRelValue(propertyInfo));
-                case ICollection<IModel> iModels:
-                    return GetChildSubEntities(iModels, GetChildRelValue(propertyInfo));
-                default:
-                    throw new Exception("Unknown type of sub-entity.");
-            }
+            if (value == null)
+                return new List<SubEntity>();
+
+            if (typeof(IModel).IsAssignableFrom(propertyInfo.PropertyType))
+                return GetParentSubEntity(
+                    propertyInfo.PropertyType,
+                    (IModel) value,
+                    GetParentRelValue(propertyInfo));
+
+            if (typeof(IEnumerable<IModel>).IsAssignableFrom(propertyInfo.PropertyType))
+                return GetChildSubEntities(
+                    propertyInfo.PropertyType.GetGenericArguments().First(),
+                    (IEnumerable<IModel>) value,
+                    GetChildRelValue(propertyInfo));
+
+            throw new Exception("Unknown type of sub-entity.");
         }
 
         private IEnumerable<SubEntity> GetParentSubEntity(
-            IModel model, string[] rel)
+            Type type, IModel model, IEnumerable<string> rel)
         {
             return new SubEntity[]
             {
                 new EmbeddedRepresentation
                 {
-                    Class = _classGenerator.GetForSingle(model.GetType()),
-                    Links = _linksGenerator.Generate(model),
-                    Properties = _propertiesGenerator.Generate(model),
+                    Class = _classGenerator.Get(type),
+                    Links = _linksGenerator.Get(type, model.Id),
+                    Properties = _propertiesGenerator.Get(type, model),
                     Rel = rel,
-                    Title = _titleGenerator.Generate(model)
+                    Title = _titleGenerator.Get(type)
                 }
             };
         }
 
-        private IEnumerable<SubEntity> GetChildSubEntities<TModel>(
-            IEnumerable<TModel> models, string[] rel)
-            where TModel : class, IModel
+        private IEnumerable<SubEntity> GetChildSubEntities(
+            Type type, IEnumerable<IModel> models, IEnumerable<string> rel)
         {
             return models.Select(m => new EmbeddedLink
             {
-                Class = _classGenerator.Generate(m),
-                Href = _apiHelper.GetUri(m.GetType(), m.Id),
+                Class = _classGenerator.Get(type),
+                Href = _apiHelper.GetUri(type, m.Id),
                 Rel = rel,
-                Title = _titleGenerator.Generate(m),
+                Title = _titleGenerator.Get(type),
                 Type = "application/json"
             });
         }
 
-        private static string[] GetParentRelValue(PropertyInfo propertyInfo)
+        private static IEnumerable<string> GetParentRelValue(MemberInfo propertyInfo)
         {
             return new[] {$"{propertyInfo.DeclaringType.Name}-{propertyInfo.Name}".ToLower()};
         }
 
-        private static string[] GetChildRelValue(PropertyInfo propertyInfo)
+        private static IEnumerable<string> GetChildRelValue(MemberInfo propertyInfo)
         {
             return new[] {$"{propertyInfo.DeclaringType.Name}-{propertyInfo.Name}".ToLower()};
-        }
-
-        public static bool IsSubEntityType(Type type)
-        {
-            return typeof(IModel).IsAssignableFrom(type) || typeof(IEnumerable<IModel>).IsAssignableFrom(type);
         }
 
         #endregion

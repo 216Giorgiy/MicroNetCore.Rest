@@ -27,6 +27,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MicroNetCore.Rest.DataTransferObjects\MicroNetCore.Rest.DataTransferObjects.csproj" />
+    <ProjectReference Include="..\MicroNetCore.Rest.MediaTypes.Hypermedia\MicroNetCore.Rest.MediaTypes.Hypermedia.csproj" />
+    <ProjectReference Include="..\MicroNetCore.Rest.MediaTypes.Json\MicroNetCore.Rest.MediaTypes.Json.csproj" />
+    <ProjectReference Include="..\MicroNetCore.Rest.MediaTypes.Xml\MicroNetCore.Rest.MediaTypes.Xml.csproj" />
     <ProjectReference Include="..\MicroNetCore.Rest.ViewModels\MicroNetCore.Rest.ViewModels.csproj" />
   </ItemGroup>
 

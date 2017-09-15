@@ -1,10 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using MicroNetCore.Models.Markup.Extensions;
+using MicroNetCore.Rest.MediaTypes.Hypermedia.Models;
 
 namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 {
     public sealed class HypermediaFieldService : IHypermediaFieldService
     {
+        #region Helpers
+
+        private static Field GetField(PropertyInfo property)
+        {
+            return new Field
+            {
+                Name = property.Name,
+                Type = FieldTypes[property.PropertyType]
+            };
+        }
+
+        #endregion
+
+        #region Const
+
         private const string Text = "Text";
         private const string Hidden = "Hidden";
         private const string Search = "Search";
@@ -27,22 +46,43 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
         private const string Image = "Image";
         private const string Reset = "Reset";
 
-        private static readonly IDictionary<Type, string> FieldTypes = new Dictionary<Type, string>
-        {
-            {typeof(string), Text},
-            {typeof(short), Number},
-            {typeof(int), Number},
-            {typeof(long), Number},
-            {typeof(float), Number},
-            {typeof(double), Number},
-            {typeof(decimal), Number},
-            {typeof(DateTime), Datetime},
-            {typeof(bool), Checkbox}
-        };
+        #endregion
 
-        public string Map(Type type)
+        #region Static
+
+        private static readonly IDictionary<Type, string> FieldTypes;
+
+        static HypermediaFieldService()
         {
-            return FieldTypes.ContainsKey(type) ? FieldTypes[type] : null;
+            FieldTypes = new Dictionary<Type, string>
+            {
+                {typeof(string), Text},
+                {typeof(short), Number},
+                {typeof(int), Number},
+                {typeof(long), Number},
+                {typeof(float), Number},
+                {typeof(double), Number},
+                {typeof(decimal), Number},
+                {typeof(DateTime), Datetime},
+                {typeof(bool), Checkbox}
+            };
         }
+
+        #endregion
+
+        #region IHypermediaFieldService
+
+        public IEnumerable<Field> GetAddFields(Type modelType)
+        {
+            var properties = modelType.GetAddProperties();
+            return properties.Select(GetField);
+        }
+
+        public IEnumerable<Field> GetEditFields(Type modelType)
+        {
+            return modelType.GetAddProperties().Select(GetField);
+        }
+
+        #endregion
     }
 }

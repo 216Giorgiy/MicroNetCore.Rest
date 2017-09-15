@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Humanizer;
+using MicroNetCore.Rest.DataTransferObjects;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Attributes;
 
 namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
@@ -10,40 +12,37 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
     {
         #region Helpers
 
-        private static string GetClass(MemberInfo viewModelType)
+        private static string CreateClass(MemberInfo modelType)
         {
-            return viewModelType.GetCustomAttribute<ClassAttribute>()?.Class.Camelize() ??
-                   viewModelType.Name.Camelize();
+            return modelType.GetCustomAttribute<ClassAttribute>()?.Class.Camelize() ??
+                   modelType.Name.Camelize();
         }
 
         #endregion
 
         #region IHypermediaClassService
 
-        public string[] Get(IResponseViewModel viewModel)
+        public IEnumerable<string> Get(Type type)
         {
-            return new[]
-            {
-                GetClass(viewModel.GetType())
-            };
+            if (!Cache.ContainsKey(type))
+                Cache.Add(type, CreateClass(type));
+
+            return new[] {Cache[type]};
         }
 
-        public string[] Get(IEnumerable<IResponseViewModel> viewModels)
+        public IEnumerable<string> Get(RestModel model)
         {
-            return new[]
-            {
-                "collection",
-                GetClass(viewModels.GetType().GetGenericArguments().First())
-            };
+            return Get(model.Type);
         }
 
-        public string[] Get(IEnumerablePage<IResponseViewModel> page)
+        public IEnumerable<string> Get(RestModels models)
         {
-            return new[]
-            {
-                "page",
-                GetClass(page.GetType().GetGenericArguments().First())
-            };
+            return Get(models.Type).Concat(new[] {"collection"});
+        }
+
+        public IEnumerable<string> Get(RestPage page)
+        {
+            return Get(page.Type).Concat(new[] {"page"});
         }
 
         #endregion

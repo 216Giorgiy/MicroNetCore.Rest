@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using MicroNetCore.Models;
+using System.Text;
+using MicroNetCore.Rest.DataTransferObjects;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Models;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Services;
 using Newtonsoft.Json;
@@ -43,7 +43,7 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia
             _titleGenerator = titleGenerator;
         }
 
-        public string Serialize(object obj)
+        public string Serialize(RestObject obj, Encoding encoding)
         {
             var entity = CreateEntity(obj);
             return JsonConvert.SerializeObject(entity, Settings);
@@ -51,22 +51,22 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia
 
         #region Helpers
 
-        private Entity CreateEntity(object obj)
+        private Entity CreateEntity(RestObject obj)
         {
             switch (obj)
             {
-                case IModel viewModel:
-                    return CreateEntity(viewModel);
-                case IEnumerable<IModel> viewModels:
-                    return CreateEntity(viewModels);
-                case IEnumerablePage<IModel> page:
+                case RestModel model:
+                    return CreateEntity(model);
+                case RestModels models:
+                    return CreateEntity(models);
+                case RestPage page:
                     return CreateEntity(page);
                 default:
                     throw new Exception($"{obj.GetType().Name} can not be converted to a Hypermedia Entity.");
             }
         }
 
-        private Entity CreateEntity(IModel model)
+        private Entity CreateEntity(RestModel model)
         {
             return new Entity
             {
@@ -75,11 +75,11 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia
                 Links = _linksGenerator.Get(model),
                 Properties = _propertiesGenerator.Get(model),
                 Entities = _subEntitiesGenerator.Get(model),
-                Title = _titleGenerator.Get(model)
+                Title = _titleGenerator.Get(model.Type)
             };
         }
 
-        private Entity CreateEntity(IEnumerable<IModel> models)
+        private Entity CreateEntity(RestModels models)
         {
             return new Entity
             {
@@ -88,11 +88,11 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia
                 Links = _linksGenerator.Get(models),
                 Properties = _propertiesGenerator.Get(models),
                 Entities = _subEntitiesGenerator.Get(models),
-                Title = _titleGenerator.Get(models)
+                Title = _titleGenerator.Get(models.Type)
             };
         }
 
-        private Entity CreateEntity(IEnumerablePage<IModel> page)
+        private Entity CreateEntity(RestPage page)
         {
             return new Entity
             {
@@ -101,7 +101,7 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia
                 Links = _linksGenerator.Get(page),
                 Properties = _propertiesGenerator.Get(page),
                 Entities = _subEntitiesGenerator.Get(page),
-                Title = _titleGenerator.Get(page)
+                Title = _titleGenerator.Get(page.Type)
             };
         }
 

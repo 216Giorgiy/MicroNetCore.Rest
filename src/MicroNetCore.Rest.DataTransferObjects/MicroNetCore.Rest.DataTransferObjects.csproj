@@ -9,4 +9,8 @@
     <PackageReference Include="MicroNetCore.Models" Version="0.0.3-alpha" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MicroNetCore.Rest.Abstractions\MicroNetCore.Rest.Abstractions.csproj" />
+  </ItemGroup>
+
 </Project>

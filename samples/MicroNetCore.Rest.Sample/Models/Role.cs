@@ -1,6 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using MicroNetCore.Models;
-using MicroNetCore.Rest.Hypermedia.Attributes;
+using MicroNetCore.Models.Markup.Attributes;
+using MicroNetCore.Rest.MediaTypes.Hypermedia.Attributes;
 
 namespace MicroNetCore.Rest.Sample.Models
 {
@@ -9,9 +10,11 @@ namespace MicroNetCore.Rest.Sample.Models
     public sealed class Role : IModel
     {
         [DataMember]
+        [Show]
         public string Name { get; set; } = "Some Role";
 
         [DataMember]
+        [Show]
         public long Id { get; set; } = 1;
     }
 }

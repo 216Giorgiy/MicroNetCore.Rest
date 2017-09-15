@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using MicroNetCore.Models;
-using MicroNetCore.Models.Markup;
-using MicroNetCore.Rest.Hypermedia.Attributes;
+using MicroNetCore.Models.Markup.Attributes;
+using MicroNetCore.Rest.MediaTypes.Hypermedia.Attributes;
 
 namespace MicroNetCore.Rest.Sample.Models
 {
@@ -9,11 +9,15 @@ namespace MicroNetCore.Rest.Sample.Models
     [DataContract]
     public sealed class User : IModel
     {
-        [Edit]
         [DataMember]
+        [Add]
+        [Edit]
+        [Show]
         public string Name { get; set; } = "Some User";
 
+        [Add]
         [Edit]
+        [Show]
         [DataMember]
         public long RoleId { get; set; } = 1;
 
@@ -21,6 +25,7 @@ namespace MicroNetCore.Rest.Sample.Models
         public Role Role { get; set; } = new Role();
 
         [DataMember]
+        [Show]
         public long Id { get; set; } = 1;
     }
 }

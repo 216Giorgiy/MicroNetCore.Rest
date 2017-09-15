@@ -17,6 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\MicroNetCore.Rest.MediaTypes.Hypermedia\MicroNetCore.Rest.MediaTypes.Hypermedia.csproj" />
     <ProjectReference Include="..\..\src\MicroNetCore.Rest\MicroNetCore.Rest.csproj" />
   </ItemGroup>
 

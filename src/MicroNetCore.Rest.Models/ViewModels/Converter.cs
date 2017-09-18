@@ -1,6 +1,6 @@
 ﻿namespace MicroNetCore.Rest.Models.ViewModels
 {
-    public static class Converter
+    internal static class Converter
     {
         public static TDestination Convert<TDestination, TSource>(TSource source)
             where TSource : class

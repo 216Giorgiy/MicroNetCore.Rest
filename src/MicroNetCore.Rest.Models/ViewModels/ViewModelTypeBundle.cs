@@ -2,7 +2,7 @@
 
 namespace MicroNetCore.Rest.Models.ViewModels
 {
-    public sealed class ViewModelTypeBundle
+    internal sealed class ViewModelTypeBundle
     {
         public ViewModelTypeBundle(
             Type modelType,

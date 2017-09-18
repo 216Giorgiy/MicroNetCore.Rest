@@ -13,7 +13,7 @@
     <Copyright>Copyright (c) 2017 David Orbelian</Copyright>
     <PackageProjectUrl>https://github.com/davidorbelian/MicroNetCore.Rest</PackageProjectUrl>
     <RepositoryUrl>https://github.com/davidorbelian/MicroNetCore.Rest</RepositoryUrl>
-    <PackageTags>Data Abstractions</PackageTags>
+    <PackageTags>REST</PackageTags>
     <PackageReleaseNotes>Alpha release.</PackageReleaseNotes>
   </PropertyGroup>
 
@@ -28,11 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MicroNetCore.Rest.Abstractions\MicroNetCore.Rest.Abstractions.csproj" />
-    <ProjectReference Include="..\MicroNetCore.Rest.DataTransferObjects\MicroNetCore.Rest.DataTransferObjects.csproj" />
-    <ProjectReference Include="..\MicroNetCore.Rest.MediaTypes.Hypermedia\MicroNetCore.Rest.MediaTypes.Hypermedia.csproj" />
-    <ProjectReference Include="..\MicroNetCore.Rest.MediaTypes.Json\MicroNetCore.Rest.MediaTypes.Json.csproj" />
-    <ProjectReference Include="..\MicroNetCore.Rest.MediaTypes.Xml\MicroNetCore.Rest.MediaTypes.Xml.csproj" />
-    <ProjectReference Include="..\MicroNetCore.Rest.ViewModels\MicroNetCore.Rest.ViewModels.csproj" />
+    <ProjectReference Include="..\MicroNetCore.Rest.Models\MicroNetCore.Rest.Models.csproj" />
   </ItemGroup>
 
 </Project>

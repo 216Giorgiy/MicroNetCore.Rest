@@ -3,10 +3,9 @@ using System.Threading.Tasks;
 using MicroNetCore.Data.Abstractions;
 using MicroNetCore.Models;
 using MicroNetCore.Rest.Abstractions;
-using MicroNetCore.Rest.DataTransferObjects;
 using MicroNetCore.Rest.Extensions;
-using MicroNetCore.Rest.ViewModels.Extensions;
-using Microsoft.AspNetCore.Http;
+using MicroNetCore.Rest.Models.RestResults;
+using MicroNetCore.Rest.Models.ViewModels.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MicroNetCore.Rest
@@ -31,16 +30,19 @@ namespace MicroNetCore.Rest
         {
             var query = Request.Query;
 
-            if (query.HasPaging())
-                return await GetPage(query);
+            if (!query.HasPaging())
+                return new ModelsRestResult(typeof(TModel), await _repository.FindAsync());
 
-            return await GetAll();
+            var index = query.GetPageIndex();
+            var size = query.GetPageSize<TModel>();
+
+            return new PageRestResult(typeof(TModel), await _repository.FindPageAsync(index, size));
         }
 
         [HttpGet("{id}")]
         public async Task<IRestResult> Get(long id)
         {
-            return new RestModel(typeof(TModel), await _repository.GetAsync(id));
+            return new ModelRestResult(typeof(TModel), await _repository.GetAsync(id));
         }
 
         [HttpPost]
@@ -62,23 +64,6 @@ namespace MicroNetCore.Rest
         {
             await _repository.DeleteAsync(id);
             return Ok();
-        }
-
-        #endregion
-
-        #region Helpers
-
-        private async Task<RestModels> GetAll()
-        {
-            return new RestModels(typeof(TModel), await _repository.FindAsync());
-        }
-
-        private async Task<RestPage> GetPage(IQueryCollection queryCollection)
-        {
-            var index = queryCollection.GetPageIndex();
-            var size = queryCollection.GetPageSize<TModel>();
-
-            return new RestPage(typeof(TModel), await _repository.FindPageAsync(index, size));
         }
 
         #endregion

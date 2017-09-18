@@ -3,18 +3,19 @@ using System.Collections.Generic;
 using MicroNetCore.Models;
 using MicroNetCore.Rest.Abstractions;
 
-namespace MicroNetCore.Rest.DataTransferObjects
+namespace MicroNetCore.Rest.Models.RestResults
 {
-    public sealed class RestModels : IRestResult
+    public sealed class ModelsRestResult : IRestResult
     {
-        public RestModels(Type type, IEnumerable<IModel> models)
+        public ModelsRestResult(Type type, IEnumerable<IModel> models)
         {
             Type = type;
             Object = models;
         }
 
         public IEnumerable<IModel> Models => (IEnumerable<IModel>) Object;
-        public Type Type { get; }
+
         public object Object { get; }
+        public Type Type { get; }
     }
 }

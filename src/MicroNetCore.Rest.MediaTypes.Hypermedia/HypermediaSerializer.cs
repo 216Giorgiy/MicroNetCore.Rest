@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Text;
 using MicroNetCore.Rest.Abstractions;
-using MicroNetCore.Rest.DataTransferObjects;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Models;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Services;
+using MicroNetCore.Rest.Models.RestResults;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -56,18 +56,18 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia
         {
             switch (obj)
             {
-                case RestModel model:
+                case ModelRestResult model:
                     return CreateEntity(model);
-                case RestModels models:
+                case ModelsRestResult models:
                     return CreateEntity(models);
-                case RestPage page:
+                case PageRestResult page:
                     return CreateEntity(page);
                 default:
                     throw new Exception($"{obj.GetType().Name} can not be converted to a Hypermedia Entity.");
             }
         }
 
-        private Entity CreateEntity(RestModel model)
+        private Entity CreateEntity(ModelRestResult model)
         {
             return new Entity
             {
@@ -80,7 +80,7 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia
             };
         }
 
-        private Entity CreateEntity(RestModels models)
+        private Entity CreateEntity(ModelsRestResult models)
         {
             return new Entity
             {
@@ -93,7 +93,7 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia
             };
         }
 
-        private Entity CreateEntity(RestPage page)
+        private Entity CreateEntity(PageRestResult page)
         {
             return new Entity
             {

@@ -7,7 +7,6 @@
   <ItemGroup>
     <PackageReference Include="Humanizer.Core" Version="2.2.0" />
     <PackageReference Include="MicroNetCore.AspNetCore.Paging" Version="0.0.4-alpha" />
-    <PackageReference Include="MicroNetCore.Models" Version="0.0.3-alpha" />
   </ItemGroup>
 
   <ItemGroup>

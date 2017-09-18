@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using MicroNetCore.Rest.DataTransferObjects;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Extensions;
+using MicroNetCore.Rest.Models.RestResults;
 
 namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 {
@@ -18,17 +18,17 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
                 .ToDictionary(p => p.Name, p => p.GetValue(obj));
         }
 
-        public IDictionary<string, object> Get(RestModel model)
+        public IDictionary<string, object> Get(ModelRestResult model)
         {
             return Get(model.Type, model.Model);
         }
 
-        public IDictionary<string, object> Get(RestModels models)
+        public IDictionary<string, object> Get(ModelsRestResult models)
         {
             return new Dictionary<string, object>();
         }
 
-        public IDictionary<string, object> Get(RestPage page)
+        public IDictionary<string, object> Get(PageRestResult page)
         {
             return new Dictionary<string, object>
             {

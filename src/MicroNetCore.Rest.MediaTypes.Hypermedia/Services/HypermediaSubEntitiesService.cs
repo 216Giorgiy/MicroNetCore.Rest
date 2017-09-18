@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using MicroNetCore.Models;
-using MicroNetCore.Rest.DataTransferObjects;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Extensions;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Helpers;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Models;
+using MicroNetCore.Rest.Models.RestResults;
 
 namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 {
@@ -34,7 +34,7 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 
         #region IHypermediaSubEntitiesGenerator
 
-        public IEnumerable<SubEntity> Get(RestModel model)
+        public IEnumerable<SubEntity> Get(ModelRestResult model)
         {
             return model.Type
                 .GetProperties()
@@ -43,12 +43,12 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
                 .ToArray();
         }
 
-        public IEnumerable<SubEntity> Get(RestModels models)
+        public IEnumerable<SubEntity> Get(ModelsRestResult models)
         {
             return models.Models.SelectMany(m => GetParentSubEntity(models.Type, m, new[] {"item"}));
         }
 
-        public IEnumerable<SubEntity> Get(RestPage page)
+        public IEnumerable<SubEntity> Get(PageRestResult page)
         {
             return page.Page.Items.SelectMany(m => GetParentSubEntity(page.Type, m, new[] {"item"}));
         }

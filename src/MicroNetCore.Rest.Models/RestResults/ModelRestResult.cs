@@ -2,18 +2,19 @@
 using MicroNetCore.Models;
 using MicroNetCore.Rest.Abstractions;
 
-namespace MicroNetCore.Rest.DataTransferObjects
+namespace MicroNetCore.Rest.Models.RestResults
 {
-    public sealed class RestModel : IRestResult
+    public sealed class ModelRestResult : IRestResult
     {
-        public RestModel(Type type, IModel model)
+        public ModelRestResult(Type type, IModel model)
         {
             Type = type;
             Object = model;
         }
 
         public IModel Model => (IModel) Object;
-        public Type Type { get; }
+
         public object Object { get; }
+        public Type Type { get; }
     }
 }

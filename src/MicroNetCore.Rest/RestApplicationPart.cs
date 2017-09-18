@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Humanizer;
 using MicroNetCore.Rest.Extensions;
-using MicroNetCore.Rest.ViewModels;
+using MicroNetCore.Rest.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 
 namespace MicroNetCore.Rest

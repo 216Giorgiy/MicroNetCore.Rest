@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
-using MicroNetCore.Rest.DataTransferObjects;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Models;
+using MicroNetCore.Rest.Models.RestResults;
 
 namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 {
     public interface IHypermediaSubEntitiesService
     {
-        IEnumerable<SubEntity> Get(RestModel model);
-        IEnumerable<SubEntity> Get(RestModels models);
-        IEnumerable<SubEntity> Get(RestPage page);
+        IEnumerable<SubEntity> Get(ModelRestResult model);
+        IEnumerable<SubEntity> Get(ModelsRestResult models);
+        IEnumerable<SubEntity> Get(PageRestResult page);
     }
 }

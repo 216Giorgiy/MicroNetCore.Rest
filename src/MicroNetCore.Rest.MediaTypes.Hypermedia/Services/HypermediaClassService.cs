@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Humanizer;
-using MicroNetCore.Rest.DataTransferObjects;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Attributes;
+using MicroNetCore.Rest.Models.RestResults;
 
 namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 {
@@ -30,17 +30,17 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
             return new[] {Cache[type]};
         }
 
-        public IEnumerable<string> Get(RestModel model)
+        public IEnumerable<string> Get(ModelRestResult model)
         {
             return Get(model.Type);
         }
 
-        public IEnumerable<string> Get(RestModels models)
+        public IEnumerable<string> Get(ModelsRestResult models)
         {
             return Get(models.Type).Concat(new[] {"collection"});
         }
 
-        public IEnumerable<string> Get(RestPage page)
+        public IEnumerable<string> Get(PageRestResult page)
         {
             return Get(page.Type).Concat(new[] {"page"});
         }

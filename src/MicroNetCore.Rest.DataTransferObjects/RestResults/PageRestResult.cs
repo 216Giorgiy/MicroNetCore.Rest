@@ -3,18 +3,19 @@ using MicroNetCore.AspNetCore.Paging;
 using MicroNetCore.Models;
 using MicroNetCore.Rest.Abstractions;
 
-namespace MicroNetCore.Rest.DataTransferObjects
+namespace MicroNetCore.Rest.DataTransferObjects.RestResults
 {
-    public sealed class RestPage : IRestResult
+    public sealed class PageRestResult : IRestResult
     {
-        public RestPage(Type type, IEnumerablePage<IModel> page)
+        public PageRestResult(Type type, IEnumerablePage<IModel> page)
         {
             Type = type;
             Object = page;
         }
 
         public IEnumerablePage<IModel> Page => (IEnumerablePage<IModel>) Object;
-        public Type Type { get; }
+
         public object Object { get; }
+        public Type Type { get; }
     }
 }

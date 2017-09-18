@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using MicroNetCore.Models;
-using MicroNetCore.Rest.DataTransferObjects;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Helpers;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Models.Actions;
+using MicroNetCore.Rest.Models.RestResults;
 using Action = MicroNetCore.Rest.MediaTypes.Hypermedia.Models.Action;
 
 namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
@@ -21,7 +21,7 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 
         #region IHypermediaActionsGenerator
 
-        public IEnumerable<Action> Get(RestModel model)
+        public IEnumerable<Action> Get(ModelRestResult model)
         {
             return new[]
             {
@@ -30,7 +30,7 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
             };
         }
 
-        public IEnumerable<Action> Get(RestModels models)
+        public IEnumerable<Action> Get(ModelsRestResult models)
         {
             return new[]
             {
@@ -38,7 +38,7 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
             };
         }
 
-        public IEnumerable<Action> Get(RestPage page)
+        public IEnumerable<Action> Get(PageRestResult page)
         {
             return new[]
             {

@@ -74,13 +74,12 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 
         public IEnumerable<Field> GetAddFields(Type modelType)
         {
-            var properties = modelType.GetAddProperties();
-            return properties.Select(GetField);
+            return modelType.GetAddProperties().Select(GetField);
         }
 
         public IEnumerable<Field> GetEditFields(Type modelType)
         {
-            return modelType.GetAddProperties().Select(GetField);
+            return modelType.GetEditProperties().Select(GetField);
         }
 
         #endregion

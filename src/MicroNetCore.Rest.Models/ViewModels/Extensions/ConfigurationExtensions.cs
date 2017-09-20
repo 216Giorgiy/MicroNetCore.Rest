@@ -7,7 +7,7 @@ namespace MicroNetCore.Rest.Models.ViewModels.Extensions
         public static IServiceCollection AddViewModels(this IServiceCollection services)
         {
             services.AddSingleton<IViewModelTypeProvider, ViewModelTypeProvider>();
-            services.AddTransient<IViewModelGenerator, ViewModelGenerator>();
+            services.AddSingleton<IViewModelGenerator, ViewModelGenerator>();
 
             return services;
         }

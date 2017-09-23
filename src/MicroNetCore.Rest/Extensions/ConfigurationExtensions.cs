@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using MicroNetCore.Collections;
+using MicroNetCore.Models;
 using MicroNetCore.Rest.Abstractions;
 using MicroNetCore.Rest.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,9 +8,9 @@ namespace MicroNetCore.Rest.Extensions
 {
     public static class ConfigurationExtensions
     {
-        public static IRestBuilder AddRest(this IServiceCollection services, IEnumerable<Type> types)
+        public static IRestBuilder AddRest(this IServiceCollection services, TypeBundle<IModel> models)
         {
-            var restPart = new RestApplicationPart(types);
+            var restPart = new RestApplicationPart(models.Types);
 
             var mvcCoreBuilder = services
                 .AddMvcCore()

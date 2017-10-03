@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using MicroNetCore.Collections;
 using MicroNetCore.Data.Abstractions;
+using MicroNetCore.Models;
 using MicroNetCore.Rest.Extensions;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Extensions;
 using MicroNetCore.Rest.MediaTypes.Json.Extensions;
@@ -15,7 +15,8 @@ namespace MicroNetCore.Rest.Sample
 {
     public sealed class Startup
     {
-        private static readonly IEnumerable<Type> RestTypes = new[] {typeof(User), typeof(Role)};
+        private static readonly TypeBundle<IModel> RestTypes =
+            new TypeBundle<IModel>(new[] {typeof(User), typeof(Role)});
 
         public Startup(IConfiguration configuration)
         {

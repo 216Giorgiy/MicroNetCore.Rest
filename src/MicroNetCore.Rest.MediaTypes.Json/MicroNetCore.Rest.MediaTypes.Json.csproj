@@ -17,6 +17,10 @@
     <PackageReleaseNotes>Alpha release.</PackageReleaseNotes>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\MicroNetCore.Rest.MediaTypes\MicroNetCore.Rest.MediaTypes.csproj" />
     <ProjectReference Include="..\MicroNetCore.Rest.Models\MicroNetCore.Rest.Models.csproj" />

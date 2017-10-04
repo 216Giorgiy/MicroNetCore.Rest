@@ -1,15 +1,14 @@
 ﻿using System.IO;
 using System.Text;
 using System.Xml;
-using MicroNetCore.Rest.Abstractions;
 
 namespace MicroNetCore.Rest.MediaTypes.Xml
 {
     public sealed class XmlSerializer : IXmlSerializer
     {
-        public string Serialize(IRestResult restObject, Encoding encoding)
+        public string Serialize(object obj, Encoding encoding)
         {
-            var serializer = new System.Xml.Serialization.XmlSerializer(restObject.Object.GetType());
+            var serializer = new System.Xml.Serialization.XmlSerializer(obj.GetType());
 
             using (var stringWriter = new StringWriter())
             {
@@ -17,7 +16,7 @@ namespace MicroNetCore.Rest.MediaTypes.Xml
 
                 using (var xmlWriter = XmlWriter.Create(stringWriter, xmlSettings))
                 {
-                    serializer.Serialize(xmlWriter, restObject.Object);
+                    serializer.Serialize(xmlWriter, obj);
                     return stringWriter.ToString();
                 }
             }

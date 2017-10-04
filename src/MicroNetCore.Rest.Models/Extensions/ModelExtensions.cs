@@ -4,19 +4,19 @@ using MicroNetCore.AspNetCore.Paging;
 using MicroNetCore.Models;
 using MicroNetCore.Rest.Abstractions;
 
-namespace MicroNetCore.Rest.Models.ViewModels.Extensions
+namespace MicroNetCore.Rest.Models.Extensions
 {
     public static class ModelExtensions
     {
         public static TViewModel ToViewModel<TModel, TViewModel>(this TModel model)
-            where TModel : class, IModel
+            where TModel : class, IEntityModel
             where TViewModel : class, IResponseViewModel<TModel>, new()
         {
-            return Converter.Convert<TViewModel, TModel>(model);
+            return (TViewModel) Converter.Convert<TModel, TViewModel>(model);
         }
 
         public static IEnumerable<TViewModel> ToViewModels<TModel, TViewModel>(this IEnumerable<TModel> models)
-            where TModel : class, IModel
+            where TModel : class, IEntityModel
             where TViewModel : class, IResponseViewModel<TModel>, new()
         {
             return models.Select(m => m.ToViewModel<TModel, TViewModel>());
@@ -24,7 +24,7 @@ namespace MicroNetCore.Rest.Models.ViewModels.Extensions
 
         public static IEnumerablePage<TViewModel> ToViewModelsPage<TModel, TViewModel>(
             this IEnumerablePage<TModel> page)
-            where TModel : class, IModel
+            where TModel : class, IEntityModel
             where TViewModel : class, IResponseViewModel<TModel>, new()
         {
             return new EnumerablePage<TViewModel>(

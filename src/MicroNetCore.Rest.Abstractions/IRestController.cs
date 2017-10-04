@@ -9,8 +9,8 @@ namespace MicroNetCore.Rest.Abstractions
         where TPost : class, IRequestViewModel<TModel>, new()
         where TPut : class, IRequestViewModel<TModel>, new()
     {
-        Task<IRestResult> Get();
-        Task<IRestResult> Get(long id);
+        Task<IActionResult> Get();
+        Task<IActionResult> Get(long id);
 
         Task<IActionResult> Post(TPost post);
         Task<IActionResult> Put(long id, TPut put);

@@ -4,7 +4,7 @@ using MicroNetCore.AspNetCore.Paging;
 using MicroNetCore.Models;
 using MicroNetCore.Rest.Abstractions;
 
-namespace MicroNetCore.Rest.Models.ViewModels.Extensions
+namespace MicroNetCore.Rest.Models.Extensions
 {
     public static class ViewModelExtensions
     {
@@ -12,7 +12,7 @@ namespace MicroNetCore.Rest.Models.ViewModels.Extensions
             where TViewModel : class, IRequestViewModel<TModel>
             where TModel : class, IModel, new()
         {
-            return Converter.Convert<TModel, TViewModel>(viewModel);
+            return (TModel) Converter.Convert<TViewModel, TModel>(viewModel);
         }
 
         public static IEnumerable<TModel> ToModels<TModel, TViewModel>(this IEnumerable<TViewModel> viewModels)

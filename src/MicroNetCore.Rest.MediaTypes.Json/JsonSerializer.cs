@@ -6,9 +6,16 @@ namespace MicroNetCore.Rest.MediaTypes.Json
 {
     public sealed class JsonSerializer : IJsonSerializer
     {
-        public string Serialize(IRestResult obj, Encoding encoding)
+        private readonly JsonSerializerSettings _settings;
+        
+        public JsonSerializer(JsonSerializerSettings jsonSerializerSettings)
         {
-            return JsonConvert.SerializeObject(obj.Object);
+            _settings = jsonSerializerSettings;
+        }
+
+        public string Serialize(object obj, Encoding encoding)
+        {
+            return JsonConvert.SerializeObject(obj, _settings);
         }
     }
 }

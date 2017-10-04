@@ -9,7 +9,7 @@ using MicroNetCore.Models;
 namespace MicroNetCore.Rest.Sample.Data
 {
     public sealed class FakeRepository<TModel> : IRepository<TModel>
-        where TModel : class, IModel, new()
+        where TModel : class, IEntityModel, new()
     {
         public async Task<ICollection<TModel>> FindAsync(Expression<Func<TModel, bool>> predicate = null)
         {

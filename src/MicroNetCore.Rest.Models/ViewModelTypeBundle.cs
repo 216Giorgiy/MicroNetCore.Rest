@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MicroNetCore.Rest.Models.ViewModels
+namespace MicroNetCore.Rest.Models
 {
     internal sealed class ViewModelTypeBundle
     {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using MicroNetCore.AspNetCore.Paging;
 using MicroNetCore.Rest.Abstractions;
 using MicroNetCore.Rest.MediaTypes.Attributes;
 using Microsoft.AspNetCore.Http;
@@ -30,18 +31,19 @@ namespace MicroNetCore.Rest.MediaTypes
             OutputFormatterWriteContext context,
             Encoding selectedEncoding)
         {
-            var restResult = (IRestResult) context.Object;
             var serializer = context.HttpContext.RequestServices.GetService<TSerializer>();
 
             await context.HttpContext.Response.WriteAsync(
-                serializer.Serialize(restResult, selectedEncoding),
+                serializer.Serialize(context.Object, selectedEncoding),
                 selectedEncoding,
                 context.HttpContext.RequestAborted);
         }
 
         protected sealed override bool CanWriteType(Type type)
         {
-            return typeof(IRestResult).IsAssignableFrom(type);
+            return typeof(IResponseViewModel).IsAssignableFrom(type) ||
+                   typeof(IEnumerable<IResponseViewModel>).IsAssignableFrom(type) ||
+                   typeof(IEnumerablePage<IResponseViewModel>).IsAssignableFrom(type);
         }
 
         #endregion

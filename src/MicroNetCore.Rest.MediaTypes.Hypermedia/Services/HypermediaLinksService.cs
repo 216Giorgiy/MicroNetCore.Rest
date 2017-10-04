@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using MicroNetCore.AspNetCore.Paging;
+using MicroNetCore.Rest.Abstractions;
+using MicroNetCore.Rest.MediaTypes.Hypermedia.Extensions;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Helpers;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Models;
-using MicroNetCore.Rest.Models.RestResults;
+using MicroNetCore.Rest.Models.Extensions;
 
 namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 {
@@ -16,40 +19,35 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
         }
 
         #region IHypermediaLinksGenerator
-
-        public IEnumerable<Link> Get(Type type, long id)
+        
+        public IEnumerable<Link> Get(IResponseViewModel model)
         {
             return new[]
             {
-                GetSelfLink(type, id)
+                GetSelfLink(model)
             };
         }
 
-        public IEnumerable<Link> Get(ModelRestResult model)
-        {
-            return Get(model.Type, model.Model.Id);
-        }
-
-        public IEnumerable<Link> Get(ModelsRestResult models)
+        public IEnumerable<Link> Get(IEnumerable<IResponseViewModel> models)
         {
             return new[]
             {
-                GetSelfLink(models.Type)
+                GetSelfLink(models.GetModelType())
             };
         }
 
-        public IEnumerable<Link> Get(PageRestResult page)
+        public IEnumerable<Link> Get(IEnumerablePage<IResponseViewModel> page)
         {
             var links = new List<Link>
             {
-                GetSelfLink(page.Type, page.Page.PageIndex, page.Page.PageSize)
+                GetSelfLink(page)
             };
 
-            if (page.Page.PageIndex > 1)
-                links.Add(GetPrevLink(page.Type, page.Page.PageIndex, page.Page.PageSize));
+            if (page.PageIndex > 1)
+                links.Add(GetPrevLink(page));
 
-            if (page.Page.PageIndex < page.Page.PageCount)
-                links.Add(GetNextLink(page.Type, page.Page.PageIndex, page.Page.PageSize));
+            if (page.PageIndex < page.PageCount)
+                links.Add(GetNextLink(page));
 
             return links.ToArray();
         }
@@ -67,43 +65,43 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
             };
         }
 
-        private Link GetSelfLink(Type type, long id)
+        private Link GetSelfLink(IResponseViewModel model)
         {
             return new Link
             {
                 Rel = new[] {"self"},
-                Href = _apiHelper.GetUri(type, id)
+                Href = _apiHelper.GetUri(model)
             };
         }
 
-        private Link GetSelfLink(Type type, int pageIndex, int pageSize)
+        private Link GetSelfLink(IEnumerablePage<IResponseViewModel> page)
         {
             return new Link
             {
                 Rel = new[] {"self"},
-                Href = GetPageHref(type, pageIndex, pageSize)
+                Href = GetPageHref(page, page.PageIndex, page.PageSize)
             };
         }
 
-        private Link GetPrevLink(Type type, int pageIndex, int pageSize)
+        private Link GetPrevLink(IEnumerablePage<IResponseViewModel> page)
         {
             return new Link
             {
                 Rel = new[] {"prev"},
-                Href = GetPageHref(type, pageIndex - 1, pageSize)
+                Href = GetPageHref(page, page.PageIndex - 1, page.PageSize)
             };
         }
 
-        private Link GetNextLink(Type type, int pageIndex, int pageSize)
+        private Link GetNextLink(IEnumerablePage<IResponseViewModel> page)
         {
             return new Link
             {
                 Rel = new[] {"next"},
-                Href = GetPageHref(type, pageIndex + 1, pageSize)
+                Href = GetPageHref(page, page.PageIndex + 1, page.PageSize)
             };
         }
 
-        private string GetPageHref(Type type, int pageIndex, int pageSize)
+        private string GetPageHref(IEnumerablePage<IResponseViewModel> page, int pageIndex, int pageSize)
         {
             var query = new Dictionary<string, object>
             {
@@ -111,7 +109,7 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
                 {"pageSize", pageSize}
             };
 
-            return _apiHelper.GetUri(type, query);
+            return _apiHelper.GetUri(page, query);
         }
 
         #endregion

@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using MicroNetCore.Models;
+using MicroNetCore.AspNetCore.Paging;
+using MicroNetCore.Rest.Abstractions;
+using MicroNetCore.Rest.MediaTypes.Hypermedia.Extensions;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Helpers;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Models.Actions;
-using MicroNetCore.Rest.Models.RestResults;
+using MicroNetCore.Rest.Models.Extensions;
 using Action = MicroNetCore.Rest.MediaTypes.Hypermedia.Models.Action;
 
 namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
@@ -21,28 +23,28 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 
         #region IHypermediaActionsGenerator
 
-        public IEnumerable<Action> Get(ModelRestResult model)
+        public IEnumerable<Action> Get(IResponseViewModel model)
         {
             return new[]
             {
-                GetEditAction(model.Type, model.Model),
-                GetDeleteAction(model.Type, model.Model)
+                GetEditAction(model),
+                GetDeleteAction(model.GetModelType(), model)
             };
         }
 
-        public IEnumerable<Action> Get(ModelsRestResult models)
+        public IEnumerable<Action> Get(IEnumerable<IResponseViewModel> models)
         {
             return new[]
             {
-                GetAddAction(models.Type)
+                GetAddAction(models.GetModelType())
             };
         }
 
-        public IEnumerable<Action> Get(PageRestResult page)
+        public IEnumerable<Action> Get(IEnumerablePage<IResponseViewModel> page)
         {
             return new[]
             {
-                GetAddAction(page.Type)
+                GetAddAction(page.GetModelType())
             };
         }
 
@@ -58,19 +60,17 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
                 _actionFormService.GetAddForm(modelType));
         }
 
-        private Action GetEditAction(Type modelType, IModel model)
+        private Action GetEditAction(IResponseViewModel model)
         {
             return new EditAction(
-                modelType,
-                _apiHelper.GetUri(modelType, model.Id),
-                _actionFormService.GetAddForm(modelType));
+                model.GetModelType(),
+                _apiHelper.GetUri(model),
+                _actionFormService.GetEditForm(model.GetModelType()));
         }
 
-        private Action GetDeleteAction(Type modelType, IModel model)
+        private Action GetDeleteAction(Type modelType, IResponseViewModel model)
         {
-            return new DeleteAction(
-                modelType,
-                _apiHelper.GetUri(modelType, model.Id));
+            return new DeleteAction(modelType, _apiHelper.GetUri(model));
         }
 
         #endregion

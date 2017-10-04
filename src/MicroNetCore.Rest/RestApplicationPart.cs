@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Humanizer;
 using MicroNetCore.Rest.Extensions;
-using MicroNetCore.Rest.Models.ViewModels;
+using MicroNetCore.Rest.Models;
 using Microsoft.AspNetCore.Mvc.ApplicationParts;
 
 namespace MicroNetCore.Rest
@@ -32,7 +32,7 @@ namespace MicroNetCore.Rest
             const TypeAttributes typeAttributes = TypeAttributes.Public | TypeAttributes.Class | TypeAttributes.Sealed;
 
             var viewModelTypeProvider = GetViewModelTypeProvider();
-
+            
             var postType = viewModelTypeProvider.GetPostViewModel(modelType);
             var putType = viewModelTypeProvider.GetPutViewModel(modelType);
 
@@ -48,7 +48,7 @@ namespace MicroNetCore.Rest
 
         private static IViewModelTypeProvider GetViewModelTypeProvider()
         {
-            IViewModelGenerator viewModelGenerator = new ViewModelGenerator();
+            IViewModelGenerator viewModelGenerator = new ViewModelGenerator(new ViewModelPropertyGenerator());
             IViewModelTypeProvider viewModelTypeProvider = new ViewModelTypeProvider(viewModelGenerator);
 
             return viewModelTypeProvider;

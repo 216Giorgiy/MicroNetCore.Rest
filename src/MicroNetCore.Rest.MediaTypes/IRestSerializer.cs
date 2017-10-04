@@ -5,6 +5,6 @@ namespace MicroNetCore.Rest.MediaTypes
 {
     public interface IRestSerializer
     {
-        string Serialize(IRestResult result, Encoding encoding);
+        string Serialize(object result, Encoding encoding);
     }
 }

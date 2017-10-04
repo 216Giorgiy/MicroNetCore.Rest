@@ -7,7 +7,7 @@ namespace MicroNetCore.Rest.Abstractions
         long Id { get; }
     }
 
-    public interface IResponseViewModel<TModel> : IViewModel<TModel>
+    public interface IResponseViewModel<TModel> : IResponseViewModel, IViewModel<TModel>
         where TModel : class, IModel
     {
     }

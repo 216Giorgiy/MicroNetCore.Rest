@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using MicroNetCore.AspNetCore.Paging;
 using MicroNetCore.Models;
+using MicroNetCore.Rest.Abstractions;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Extensions;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Helpers;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Models;
-using MicroNetCore.Rest.Models.RestResults;
+using MicroNetCore.Rest.Models.Extensions;
 
 namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 {
@@ -34,23 +36,24 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 
         #region IHypermediaSubEntitiesGenerator
 
-        public IEnumerable<SubEntity> Get(ModelRestResult model)
+        public IEnumerable<SubEntity> Get(IResponseViewModel model)
         {
-            return model.Type
+            return model.GetModelType()
                 .GetProperties()
                 .Where(p => p.IsSubEntityType())
-                .SelectMany(p => GetSubEntities(p, model.Model))
+                .SelectMany(p => GetSubEntities(p, model))
                 .ToArray();
         }
 
-        public IEnumerable<SubEntity> Get(ModelsRestResult models)
+        public IEnumerable<SubEntity> Get(IEnumerable<IResponseViewModel> models)
         {
-            return models.Models.SelectMany(m => GetParentSubEntity(models.Type, m, new[] {"item"}));
+            var modelsArray = models as IResponseViewModel[] ?? models.ToArray();
+            return modelsArray.SelectMany(m => GetParentSubEntity(m, new[] {"item"}));
         }
 
-        public IEnumerable<SubEntity> Get(PageRestResult page)
+        public IEnumerable<SubEntity> Get(IEnumerablePage<IResponseViewModel> page)
         {
-            return page.Page.Items.SelectMany(m => GetParentSubEntity(page.Type, m, new[] {"item"}));
+            return page.Items.SelectMany(m => GetParentSubEntity(m, new[] {"item"}));
         }
 
         #endregion
@@ -66,45 +69,38 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
                 return new List<SubEntity>();
 
             if (typeof(IModel).IsAssignableFrom(propertyInfo.PropertyType))
-                return GetParentSubEntity(
-                    propertyInfo.PropertyType,
-                    (IModel) value,
-                    GetParentRelValue(propertyInfo));
+                return GetParentSubEntity((IResponseViewModel) value, GetParentRelValue(propertyInfo));
 
             if (typeof(IEnumerable<IModel>).IsAssignableFrom(propertyInfo.PropertyType))
-                return GetChildSubEntities(
-                    propertyInfo.PropertyType.GetGenericArguments().First(),
-                    (IEnumerable<IModel>) value,
-                    GetChildRelValue(propertyInfo));
+                return GetChildSubEntities((IEnumerable<IResponseViewModel>) value, GetChildRelValue(propertyInfo));
 
             throw new Exception("Unknown type of sub-entity.");
         }
 
-        private IEnumerable<SubEntity> GetParentSubEntity(
-            Type type, IModel model, IEnumerable<string> rel)
+        private IEnumerable<SubEntity> GetParentSubEntity(IResponseViewModel model, IEnumerable<string> rel)
         {
             return new SubEntity[]
             {
                 new EmbeddedRepresentation
                 {
-                    Class = _classGenerator.Get(type),
-                    Links = _linksGenerator.Get(type, model.Id),
-                    Properties = _propertiesGenerator.Get(type, model),
+                    Class = _classGenerator.Get(model),
+                    Links = _linksGenerator.Get(model),
+                    Properties = _propertiesGenerator.Get(model),
                     Rel = rel,
-                    Title = _titleGenerator.Get(type)
+                    Title = _titleGenerator.Get(model)
                 }
             };
         }
 
-        private IEnumerable<SubEntity> GetChildSubEntities(
-            Type type, IEnumerable<IModel> models, IEnumerable<string> rel)
+        private IEnumerable<SubEntity> GetChildSubEntities(IEnumerable<IResponseViewModel> models, IEnumerable<string> rel)
         {
-            return models.Select(m => new EmbeddedLink
+            var modelsArray = models as IResponseViewModel[] ?? models.ToArray();
+            return modelsArray.Select(m => new EmbeddedLink
             {
-                Class = _classGenerator.Get(type),
-                Href = _apiHelper.GetUri(type, m.Id),
+                Class = _classGenerator.Get(modelsArray),
+                Href = _apiHelper.GetUri(modelsArray),
                 Rel = rel,
-                Title = _titleGenerator.Get(type),
+                Title = _titleGenerator.Get(modelsArray),
                 Type = "application/json"
             });
         }

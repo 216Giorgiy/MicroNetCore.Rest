@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MicroNetCore.Rest.Models.ViewModels
+namespace MicroNetCore.Rest.Models
 {
     public interface IViewModelGenerator
     {

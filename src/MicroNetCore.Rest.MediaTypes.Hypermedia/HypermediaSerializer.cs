@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using MicroNetCore.AspNetCore.Paging;
 using MicroNetCore.Rest.Abstractions;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Models;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Services;
-using MicroNetCore.Rest.Models.RestResults;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -44,30 +46,30 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia
             _titleGenerator = titleGenerator;
         }
 
-        public string Serialize(IRestResult result, Encoding encoding)
+        public string Serialize(object obj, Encoding encoding)
         {
-            var entity = CreateEntity(result);
+            var entity = CreateEntity(obj);
             return JsonConvert.SerializeObject(entity, Settings);
         }
 
         #region Helpers
 
-        private Entity CreateEntity(IRestResult obj)
+        private Entity CreateEntity(object obj)
         {
             switch (obj)
             {
-                case ModelRestResult model:
+                case IResponseViewModel model:
                     return CreateEntity(model);
-                case ModelsRestResult models:
+                case IEnumerable<IResponseViewModel> models:
                     return CreateEntity(models);
-                case PageRestResult page:
+                case IEnumerablePage<IResponseViewModel> page:
                     return CreateEntity(page);
                 default:
                     throw new Exception($"{obj.GetType().Name} can not be converted to a Hypermedia Entity.");
             }
         }
 
-        private Entity CreateEntity(ModelRestResult model)
+        private Entity CreateEntity(IResponseViewModel model)
         {
             return new Entity
             {
@@ -76,24 +78,26 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia
                 Links = _linksGenerator.Get(model),
                 Properties = _propertiesGenerator.Get(model),
                 Entities = _subEntitiesGenerator.Get(model),
-                Title = _titleGenerator.Get(model.Type)
+                Title = _titleGenerator.Get(model)
             };
         }
 
-        private Entity CreateEntity(ModelsRestResult models)
+        private Entity CreateEntity(IEnumerable<IResponseViewModel> models)
         {
+            var modelsArray = models.ToArray();
+
             return new Entity
             {
-                Actions = _actionsGenerator.Get(models),
-                Class = _classGenerator.Get(models),
-                Links = _linksGenerator.Get(models),
-                Properties = _propertiesGenerator.Get(models),
-                Entities = _subEntitiesGenerator.Get(models),
-                Title = _titleGenerator.Get(models.Type)
+                Actions = _actionsGenerator.Get(modelsArray),
+                Class = _classGenerator.Get(modelsArray),
+                Links = _linksGenerator.Get(modelsArray),
+                Properties = _propertiesGenerator.Get(modelsArray),
+                Entities = _subEntitiesGenerator.Get(modelsArray),
+                Title = _titleGenerator.Get(modelsArray)
             };
         }
 
-        private Entity CreateEntity(PageRestResult page)
+        private Entity CreateEntity(IEnumerablePage<IResponseViewModel> page)
         {
             return new Entity
             {
@@ -102,7 +106,7 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia
                 Links = _linksGenerator.Get(page),
                 Properties = _propertiesGenerator.Get(page),
                 Entities = _subEntitiesGenerator.Get(page),
-                Title = _titleGenerator.Get(page.Type)
+                Title = _titleGenerator.Get(page)
             };
         }
 

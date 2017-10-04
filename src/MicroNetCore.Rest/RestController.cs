@@ -4,20 +4,20 @@ using MicroNetCore.Data.Abstractions;
 using MicroNetCore.Models;
 using MicroNetCore.Rest.Abstractions;
 using MicroNetCore.Rest.Extensions;
-using MicroNetCore.Rest.Models.RestResults;
-using MicroNetCore.Rest.Models.ViewModels.Extensions;
+using MicroNetCore.Rest.Models.Extensions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MicroNetCore.Rest
 {
     [Route("api/[controller]")]
     public abstract class RestController<TModel, TPost, TPut> : Controller, IRestController<TModel, TPost, TPut>
-        where TModel : class, IModel, new()
+        where TModel : class, IEntityModel, new()
         where TPost : class, IRequestViewModel<TModel>, new()
         where TPut : class, IRequestViewModel<TModel>, new()
     {
         private readonly IRepository<TModel> _repository;
 
+        // Required to be public to be discoverable
         public RestController(IRepositoryFactory repositoryFactory)
         {
             _repository = repositoryFactory.Create<TModel>();
@@ -26,23 +26,25 @@ namespace MicroNetCore.Rest
         #region IRestController
 
         [HttpGet]
-        public async Task<IRestResult> Get()
+        public async Task<IActionResult> Get()
         {
             var query = Request.Query;
 
             if (!query.HasPaging())
-                return new ModelsRestResult(typeof(TModel), await _repository.FindAsync());
+            {
+                return Ok(await _repository.FindAsync());
+            }
 
             var index = query.GetPageIndex();
             var size = query.GetPageSize<TModel>();
 
-            return new PageRestResult(typeof(TModel), await _repository.FindPageAsync(index, size));
+            return Ok(await _repository.FindPageAsync(index, size));
         }
 
         [HttpGet("{id}")]
-        public async Task<IRestResult> Get(long id)
+        public async Task<IActionResult> Get(long id)
         {
-            return new ModelRestResult(typeof(TModel), await _repository.GetAsync(id));
+            return Ok(await _repository.GetAsync(id));
         }
 
         [HttpPost]

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MicroNetCore.Rest.Models.ViewModels
+namespace MicroNetCore.Rest.Models
 {
     public sealed class ViewModelTypeProvider : IViewModelTypeProvider
     {

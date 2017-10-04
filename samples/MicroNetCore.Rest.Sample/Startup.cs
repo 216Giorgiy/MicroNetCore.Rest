@@ -4,6 +4,7 @@ using MicroNetCore.Models;
 using MicroNetCore.Rest.Extensions;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Extensions;
 using MicroNetCore.Rest.MediaTypes.Json.Extensions;
+using MicroNetCore.Rest.MediaTypes.Xml.Extensions;
 using MicroNetCore.Rest.Sample.Data;
 using MicroNetCore.Rest.Sample.Models;
 using Microsoft.AspNetCore.Builder;
@@ -15,8 +16,8 @@ namespace MicroNetCore.Rest.Sample
 {
     public sealed class Startup
     {
-        private static readonly TypeBundle<IModel> RestTypes =
-            new TypeBundle<IModel>(new[] {typeof(User), typeof(Role)});
+        private static readonly TypeBundle<IEntityModel> RestTypes =
+            new TypeBundle<IEntityModel>(new[] {typeof(User), typeof(Role)});
 
         public Startup(IConfiguration configuration)
         {
@@ -28,17 +29,14 @@ namespace MicroNetCore.Rest.Sample
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRest(RestTypes).AddJson().AddHypermedia();
+            services.AddRest(RestTypes).AddJson().AddXml().AddHypermedia();
             services.AddTransient<IRepositoryFactory, FakeRepositoryFactory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-                app.UseDeveloperExceptionPage();
-
-            app.UseMvc();
+            app.UseRest();
         }
     }
 }

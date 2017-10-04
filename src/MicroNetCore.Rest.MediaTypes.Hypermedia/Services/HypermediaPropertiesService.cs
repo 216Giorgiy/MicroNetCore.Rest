@@ -1,40 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using MicroNetCore.AspNetCore.Paging;
+using MicroNetCore.Rest.Abstractions;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Extensions;
-using MicroNetCore.Rest.Models.RestResults;
+using MicroNetCore.Rest.Models.Extensions;
 
 namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 {
     public sealed class HypermediaPropertiesService : IHypermediaPropertiesService
     {
         #region IHypermediaPropertiesService
-
-        public IDictionary<string, object> Get(Type type, object obj)
+        
+        public IDictionary<string, object> Get(IResponseViewModel model)
         {
-            return type
+            return model.GetModelType()
                 .GetProperties()
                 .Where(p => !p.IsSubEntityType())
-                .ToDictionary(p => p.Name, p => p.GetValue(obj));
+                .ToDictionary(p => p.Name, p => p.GetValue(model));
         }
 
-        public IDictionary<string, object> Get(ModelRestResult model)
-        {
-            return Get(model.Type, model.Model);
-        }
-
-        public IDictionary<string, object> Get(ModelsRestResult models)
+        public IDictionary<string, object> Get(IEnumerable<IResponseViewModel> models)
         {
             return new Dictionary<string, object>();
         }
 
-        public IDictionary<string, object> Get(PageRestResult page)
+        public IDictionary<string, object> Get(IEnumerablePage<IResponseViewModel> page)
         {
             return new Dictionary<string, object>
             {
-                {nameof(page.Page.PageCount), page.Page.PageCount},
-                {nameof(page.Page.PageIndex), page.Page.PageIndex},
-                {nameof(page.Page.PageSize), page.Page.PageSize}
+                {nameof(page.PageCount), page.PageCount},
+                {nameof(page.PageIndex), page.PageIndex},
+                {nameof(page.PageSize), page.PageSize}
             };
         }
 

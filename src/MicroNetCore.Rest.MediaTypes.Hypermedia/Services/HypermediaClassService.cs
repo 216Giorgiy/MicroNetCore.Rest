@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Humanizer;
+using MicroNetCore.AspNetCore.Paging;
+using MicroNetCore.Rest.Abstractions;
 using MicroNetCore.Rest.MediaTypes.Hypermedia.Attributes;
-using MicroNetCore.Rest.Models.RestResults;
+using MicroNetCore.Rest.Models.Extensions;
 
 namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 {
@@ -22,32 +24,32 @@ namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 
         #region IHypermediaClassService
 
-        public IEnumerable<string> Get(Type type)
+        public IEnumerable<string> Get(IResponseViewModel model)
         {
-            if (!Cache.ContainsKey(type))
-                Cache.Add(type, CreateClass(type));
-
-            return new[] {Cache[type]};
+            return Get(model.GetModelType());
         }
 
-        public IEnumerable<string> Get(ModelRestResult model)
+        public IEnumerable<string> Get(IEnumerable<IResponseViewModel> models)
         {
-            return Get(model.Type);
+            return Get(models.GetModelType()).Concat(new[] {"collection"});
         }
 
-        public IEnumerable<string> Get(ModelsRestResult models)
+        public IEnumerable<string> Get(IEnumerablePage<IResponseViewModel> page)
         {
-            return Get(models.Type).Concat(new[] {"collection"});
-        }
-
-        public IEnumerable<string> Get(PageRestResult page)
-        {
-            return Get(page.Type).Concat(new[] {"page"});
+            return Get(page.GetModelType()).Concat(new[] {"page"});
         }
 
         #endregion
 
         #region Static
+
+        private static IEnumerable<string> Get(Type type)
+        {
+            if (!Cache.ContainsKey(type))
+                Cache.Add(type, CreateClass(type));
+
+            return new[] { Cache[type] };
+        }
 
         private static readonly IDictionary<Type, string> Cache;
 

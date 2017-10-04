@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using MicroNetCore.Rest.Models.RestResults;
+﻿using System.Collections.Generic;
+using MicroNetCore.AspNetCore.Paging;
+using MicroNetCore.Rest.Abstractions;
 
 namespace MicroNetCore.Rest.MediaTypes.Hypermedia.Services
 {
     public interface IHypermediaClassService
     {
-        IEnumerable<string> Get(Type type);
-        IEnumerable<string> Get(ModelRestResult model);
-        IEnumerable<string> Get(ModelsRestResult models);
-        IEnumerable<string> Get(PageRestResult page);
+        IEnumerable<string> Get(IResponseViewModel model);
+        IEnumerable<string> Get(IEnumerable<IResponseViewModel> models);
+        IEnumerable<string> Get(IEnumerablePage<IResponseViewModel> page);
     }
 }
